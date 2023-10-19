@@ -14,10 +14,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
+@Component
 public class JwtAuthenticationEntryPoint extends Http403ForbiddenEntryPoint {
     @Override
     public void commence(
