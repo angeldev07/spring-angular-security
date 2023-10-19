@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/jwt
+    username: angel
+    password: 1152069
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+
+jwt:
+  secret:
+    key: 76397924423F4528482B4D6251655468576D5A7134743777217A25432A46294A
+
+
