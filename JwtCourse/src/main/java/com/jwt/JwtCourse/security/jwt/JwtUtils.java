@@ -107,4 +107,11 @@ public class JwtUtils {
     }
 
 
+    public String getSubject(String token){
+        return getVerifier()
+                .verify(token)
+                .getSubject();
+    }
+
+
 }
