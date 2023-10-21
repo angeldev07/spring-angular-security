@@ -11,10 +11,13 @@ import com.jwt.JwtCourse.security.impl.UserDetailsImpl;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -100,10 +103,11 @@ public class JwtUtils {
      * @return A GrantedAuthority list.
      */
     public List<GrantedAuthority> getAuthorities(String token){
-        return getVerifier()
+        String [] claims = getVerifier()
                 .verify(token)
                 .getClaim(SecurityConstant.AUTHORITIES)
-                .asList(GrantedAuthority.class);
+                .asArray(String.class);
+        return Arrays.stream(claims).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
 

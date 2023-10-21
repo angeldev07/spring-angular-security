@@ -89,7 +89,7 @@ public class ExceptionHandling {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpResponse> internalErrorException (Exception exception){
         LOGGER.error(exception.getMessage());
-        return createHttpResponse(INTERNAL_SERVER_ERROR, INTERNAL_ERROR_MSG);
+        return createHttpResponse(INTERNAL_SERVER_ERROR, exception.getMessage().toUpperCase());
     }
 
     @ExceptionHandler(NoResultException.class)
