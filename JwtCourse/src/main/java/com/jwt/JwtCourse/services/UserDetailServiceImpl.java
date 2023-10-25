@@ -16,15 +16,33 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private LoginAttemptService loginAttemptService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findUserByUsername(username).orElseThrow();
+
+        validateLoginAttempt(user);
+
         user.setLastLoginDateDisplay(user.getLastLoginDate());
         user.setLastLoginDate(new Date());
         userRepository.save(user);
 
         return new UserDetailsImpl(user);
+    }
+
+    private void validateLoginAttempt(User user) {
+        if (user.isNotLocked()) {
+
+            boolean hasBeenExceededAttempts = this.loginAttemptService.isExceededAttempts(user.getUsername());
+
+            user.setNotLocked(! hasBeenExceededAttempts);
+
+        } else {
+            this.loginAttemptService.removeUserLoginAttempt(user.getUsername());
+        }
     }
 }
