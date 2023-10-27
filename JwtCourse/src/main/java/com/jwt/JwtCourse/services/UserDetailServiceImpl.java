@@ -21,6 +21,9 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Autowired
     private LoginAttemptService loginAttemptService;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findUserByUsername(username).orElseThrow();
@@ -43,6 +46,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
         } else {
             this.loginAttemptService.removeUserLoginAttempt(user.getUsername());
+            emailService.sendEmail("pruebasbeclpbd@gmail.com", "Bloqueo de cuenta", "Su cuenta ha sido bloqueada por securidad al detectarse varios intentos fallidos de inicio de sesion. Pongase en contacto con soporte.");
         }
     }
 }
