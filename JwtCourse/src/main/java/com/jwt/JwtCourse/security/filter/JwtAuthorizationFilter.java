@@ -1,15 +1,11 @@
 package com.jwt.JwtCourse.security.filter;
 
-import com.jwt.JwtCourse.security.constants.SecurityConstant;
 import com.jwt.JwtCourse.security.jwt.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -20,7 +16,7 @@ import java.io.IOException;
 import static com.jwt.JwtCourse.security.constants.SecurityConstant.OPTIONS_HTTP_METHOD;
 import static com.jwt.JwtCourse.security.constants.SecurityConstant.TOKEN_PREFIX;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.OK;
 
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {

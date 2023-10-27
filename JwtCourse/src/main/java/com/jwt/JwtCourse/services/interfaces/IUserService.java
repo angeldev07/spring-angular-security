@@ -6,7 +6,6 @@ import com.jwt.JwtCourse.exceptions.EmailNotFoundException;
 import com.jwt.JwtCourse.exceptions.UserNotFoundException;
 import com.jwt.JwtCourse.exceptions.UsernameExistException;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public interface IUserService {

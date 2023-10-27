@@ -17,11 +17,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.jwt.JwtCourse.security.constants.SecurityConstant.JWT_TOKEN_HEADEER;
 import static org.springframework.http.HttpStatus.OK;
-
-import java.nio.file.attribute.UserPrincipal;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = { "/", "/user"})
@@ -35,6 +34,7 @@ public class UserController extends ExceptionHandling {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
 
     @GetMapping
     public ResponseEntity<List<User>> home () {

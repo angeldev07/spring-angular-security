@@ -2,13 +2,10 @@ package com.jwt.JwtCourse.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jwt.JwtCourse.http.responses.HttpResponse;
-import com.jwt.JwtCourse.security.constants.SecurityConstant;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +13,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import static com.jwt.JwtCourse.security.constants.SecurityConstant.ACCESS_DENIED_MESSAGE;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
