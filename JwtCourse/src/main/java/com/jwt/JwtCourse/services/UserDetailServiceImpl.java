@@ -42,11 +42,17 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
             boolean hasBeenExceededAttempts = this.loginAttemptService.isExceededAttempts(user.getUsername());
 
-            user.setNotLocked(! hasBeenExceededAttempts);
+            if(! hasBeenExceededAttempts)
+                return;
+
+            //if is true then negate  the user has not exceeded the login attempts
+            user.setNotLocked(false);
+            emailService.sendEmail("pruebasbeclpbd@gmail.com", "Bloqueo de cuenta", "Su cuenta ha sido bloqueada por securidad al detectarse varios intentos fallidos de inicio de sesion. Pongase en contacto con soporte.");
 
         } else {
             this.loginAttemptService.removeUserLoginAttempt(user.getUsername());
-            emailService.sendEmail("pruebasbeclpbd@gmail.com", "Bloqueo de cuenta", "Su cuenta ha sido bloqueada por securidad al detectarse varios intentos fallidos de inicio de sesion. Pongase en contacto con soporte.");
+
         }
     }
+
 }

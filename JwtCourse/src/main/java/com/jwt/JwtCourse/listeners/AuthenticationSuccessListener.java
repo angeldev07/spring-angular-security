@@ -1,6 +1,5 @@
 package com.jwt.JwtCourse.listeners;
 
-import com.jwt.JwtCourse.entities.User;
 import com.jwt.JwtCourse.security.impl.UserDetailsImpl;
 import com.jwt.JwtCourse.services.LoginAttemptService;
 import org.springframework.beans.factory.annotation.Autowired;
