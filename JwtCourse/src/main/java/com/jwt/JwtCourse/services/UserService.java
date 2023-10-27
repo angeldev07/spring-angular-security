@@ -30,11 +30,18 @@ public class UserService implements IUserService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public User createUser(String firstName, String lastName, String username, String email, String password) throws UsernameExistException, EmailExistException {
 
         //Check if the user Exist with the username or email
         isUserExistWithUsernameOrEmail(username, email);
+
+        // if pass the line 40 we can send the email
+
+        emailService.sendEmail(email, "Success register account", "Your account has been create successful");
 
         return userRepository.save(
                 new User()
