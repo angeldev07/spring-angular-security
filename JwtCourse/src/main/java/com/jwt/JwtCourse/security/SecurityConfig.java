@@ -2,6 +2,7 @@ package com.jwt.JwtCourse.security;
 
 import com.jwt.JwtCourse.security.filter.JwtAccessDeniedHandler;
 import com.jwt.JwtCourse.security.filter.JwtAuthenticationEntryPoint;
+import com.jwt.JwtCourse.security.filter.JwtAuthenticationFilter;
 import com.jwt.JwtCourse.security.filter.JwtAuthorizationFilter;
 import com.jwt.JwtCourse.security.jwt.JwtUtils;
 import com.jwt.JwtCourse.services.UserDetailServiceImpl;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,7 +25,7 @@ import static com.jwt.JwtCourse.security.constants.SecurityConstant.PUBLIC_URLS;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -34,6 +36,7 @@ public class SecurityConfig {
 
     @Autowired
     private JwtAuthorizationFilter jwtAuthorizationFilter;
+
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -46,7 +49,10 @@ public class SecurityConfig {
 
 
     @Bean
-    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws  Exception{
+    public SecurityFilterChain securityFilterChain (HttpSecurity http,  AuthenticationManager authenticationManager) throws  Exception{
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils);
+        jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
+        jwtAuthenticationFilter.setFilterProcessesUrl("/login");
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> {
@@ -60,6 +66,7 @@ public class SecurityConfig {
                     ex.accessDeniedHandler(jwtAccessDeniedHandler);
                     ex.authenticationEntryPoint(jwtAuthenticationEntryPoint);
                 })
+                .addFilter(jwtAuthenticationFilter)
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

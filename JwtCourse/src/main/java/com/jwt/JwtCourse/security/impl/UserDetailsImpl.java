@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -20,9 +21,11 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.stream(this.user.getAuthorities())
+        List<SimpleGrantedAuthority> authorityList = Arrays.stream(this.user.getAuthorities())
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
+        authorityList.add(new SimpleGrantedAuthority(user.getRole()));
+        return authorityList;
     }
 
     @Override
