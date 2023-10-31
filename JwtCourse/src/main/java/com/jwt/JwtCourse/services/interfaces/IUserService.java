@@ -6,6 +6,7 @@ import com.jwt.JwtCourse.exceptions.EmailNotFoundException;
 import com.jwt.JwtCourse.exceptions.UserNotFoundException;
 import com.jwt.JwtCourse.exceptions.UsernameExistException;
 import com.jwt.JwtCourse.http.DTO.AddUserDTO;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -23,12 +24,12 @@ public interface IUserService {
 
     User addUser(AddUserDTO userDTO) throws EmailExistException, UsernameExistException, IOException;
 
-    User deleteUser(Integer id);
+    User deleteUser(Integer id) throws UserNotFoundException;
 
     User updateUser(AddUserDTO userDTO) throws IOException;
 
-    void resetPassword(String email, String newPassword);
+    void resetPassword(String email, String newPassword) throws EmailNotFoundException;
 
-    User updateProfileImg(String username, MultipartFile profileImg) throws IOException;
+    void updateProfileImg(String username, MultipartFile profileImg) throws IOException, UsernameNotFoundException;
 
 }

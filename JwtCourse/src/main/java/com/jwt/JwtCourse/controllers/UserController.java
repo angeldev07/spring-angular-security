@@ -1,28 +1,21 @@
 package com.jwt.JwtCourse.controllers;
 
 import com.jwt.JwtCourse.entities.User;
-import com.jwt.JwtCourse.exceptions.EmailExistException;
-import com.jwt.JwtCourse.exceptions.ExceptionHandling;
-import com.jwt.JwtCourse.exceptions.UserNotFoundException;
-import com.jwt.JwtCourse.exceptions.UsernameExistException;
+import com.jwt.JwtCourse.exceptions.*;
+import com.jwt.JwtCourse.http.DTO.AddUserDTO;
 import com.jwt.JwtCourse.http.DTO.UserRegisterDTO;
-import com.jwt.JwtCourse.security.impl.UserDetailsImpl;
-import com.jwt.JwtCourse.security.jwt.JwtUtils;
+import com.jwt.JwtCourse.http.requests.UpdatePassword;
 import com.jwt.JwtCourse.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
-
-import static com.jwt.JwtCourse.security.constants.SecurityConstant.JWT_TOKEN_HEADEER;
-import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping( "/user")
@@ -32,11 +25,42 @@ public class UserController extends ExceptionHandling {
     private IUserService userService;
 
 
+    @PostMapping("/add")
+    public ResponseEntity<User> addNewUser(@RequestBody AddUserDTO userDTO) throws EmailExistException, IOException, UsernameExistException {
+        User user = userService.addUser(userDTO);
+        return ResponseEntity.ok(user);
+    }
+
     @GetMapping
     public ResponseEntity<List<User>> home () {
         return ResponseEntity.ok(
                 userService.findAllUsers()
         );
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<User> updateUser(@RequestBody AddUserDTO userDTO) throws IOException {
+        User user = userService.updateUser(userDTO);
+        return ResponseEntity.ok(user);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Boolean> deleteUser(@RequestParam Integer userId) throws UserNotFoundException {
+       User user = userService.deleteUser(userId);
+       return ResponseEntity.ok(user != null);
+    }
+
+    @PatchMapping("/updatePassword")
+    public ResponseEntity<Boolean> updatePassword(@RequestBody UpdatePassword updatePassword) throws EmailNotFoundException {
+        userService.resetPassword(updatePassword.getEmail(), updatePassword.getPassword());
+        return ResponseEntity.ok(true);
+    }
+
+
+    @PatchMapping(value = "/update-profile-img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateProfileImg (@RequestParam("email") String email, @RequestPart("profileImg") MultipartFile img) throws IOException, UsernameNotFoundException {
+        userService.updateProfileImg(email, img);
+        return ResponseEntity.ok(true);
     }
 
     @PostMapping("/register")

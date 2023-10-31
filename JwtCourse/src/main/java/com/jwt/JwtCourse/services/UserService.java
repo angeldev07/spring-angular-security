@@ -98,12 +98,12 @@ public class UserService implements IUserService {
                 .build();
         userRepository.save(user);
         saveProfileImg(user, userDTO.getProfileImg());
-        return null;
+        return user;
     }
 
     @Override
-    public User deleteUser(Integer id) {
-        User user = userRepository.findById(id).get();
+    public User deleteUser(Integer id) throws  UserNotFoundException{
+        User user = userRepository.findById(id).orElseThrow();
         userRepository.deleteById(id);
         return user;
     }
@@ -124,18 +124,17 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void resetPassword(String email, String newPassword) {
-        User user = userRepository.findUserByEmail(email).get();
+    public void resetPassword(String email, String newPassword) throws EmailNotFoundException{
+        User user = userRepository.findUserByEmail(email).orElseThrow();
         user.setPassword(bCryptPasswordEncoder.encode(newPassword));
         userRepository.save(user);
         emailService.sendEmail(email, "Changed password", "Your new password was updated successfully");
     }
 
     @Override
-    public User updateProfileImg(String username, MultipartFile profileImg) throws IOException {
-        User user = userRepository.findUserByUsername(username).get();
+    public void updateProfileImg(String username, MultipartFile profileImg) throws IOException, UsernameNotFoundException {
+        User user = userRepository.findUserByUsername(username).orElseThrow();
         saveProfileImg(user, profileImg);
-        return user;
     }
 
     @Override
