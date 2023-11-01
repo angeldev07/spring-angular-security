@@ -1,2 +1,25 @@
-<p>auth works!</p>
+<section class="w-full h-screen flex flex-col items-center justify-center">
+
+  <form class="w-full max-w-[600px] mx-auto" [formGroup]="loginForm" (ngSubmit)="onSubmit($event)">
+    <h1 class="text-center mb-4">Login</h1>
+
+
+    <input class="w-full border border-black mb-2 p-2 rounded-md"
+           type="text"
+           formControlName="username"
+           placeholder="username">
+
+    <input class="w-full border border-black mb-2 p-2 rounded-md"
+           type="password"
+           formControlName="password"
+           placeholder="**********">
+
+    <button
+      class="w-full bg-blue-600 text-white font-semibold text-center p-3 rounded-md"
+      type="submit">Login
+    </button>
+
+  </form>
+</section>
+
 
