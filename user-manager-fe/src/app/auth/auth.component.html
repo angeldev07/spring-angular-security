@@ -1,25 +1,36 @@
-<section class="w-full h-screen flex flex-col items-center justify-center">
+<section class="w-full h-screen flex flex-col items-center justify-center px-4 bg-[#264653]">
 
-  <form class="w-full max-w-[600px] mx-auto" [formGroup]="loginForm" (ngSubmit)="onSubmit($event)">
-    <h1 class="text-center mb-4">Login</h1>
+  <div class="bg-white px-8 pt-2 pb-8 rounded-md flex flex-col items-center gap-4 md:pb-4 md:flex-row w-full max-w-[750px]">
 
+    <section class="w-full" >
+      <img src="assets/login.jpg" class="w-full ">
+    </section>
 
-    <input class="w-full border border-black mb-2 p-2 rounded-md"
-           type="text"
-           formControlName="username"
-           placeholder="username">
+    <section class="my-4 w-full">
+      <h2 class="text-center font-bold text-xl w-full mb-6">Hello again!</h2>
 
-    <input class="w-full border border-black mb-2 p-2 rounded-md"
-           type="password"
-           formControlName="password"
-           placeholder="**********">
+      <form class="w-full" [formGroup]="loginForm" (ngSubmit)="onSubmit($event)">
 
-    <button
-      class="w-full bg-blue-600 text-white font-semibold text-center p-3 rounded-md"
-      type="submit">Login
-    </button>
+        <input class="block w-full mb-4 p-2 rounded-md bg-gray-100 shadow"
+               type="text"
+               formControlName="username"
+               placeholder="username">
 
-  </form>
+        <input class="block w-full mb-4 p-2 rounded-md bg-gray-100 shadow"
+               type="password"
+               formControlName="password"
+               placeholder="**********">
+
+        <button
+          class="w-full bg-blue-600 text-white font-semibold text-center p-3 rounded-md transition-colors hover:bg-blue-500"
+          type="submit">Login
+        </button>
+
+      </form>
+      <a href="#" class="inline-block w-full text-right mt-4 underline"> Don't have account?</a>
+    </section>
+  </div>
+  <p class="mt-3 text-white">Made with 💚 <a href="https://github.com/angeldev07" class="underline" target="_blank">@angeldev07</a> </p>
 </section>
 
 
