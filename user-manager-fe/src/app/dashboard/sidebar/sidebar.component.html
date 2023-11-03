@@ -1,0 +1,21 @@
+<aside class="bg-[#1c2434] fixed w-60 top-0 bottom-0 z-[2] transition-transform left-0  lg:translate-x-0 "
+       [ngClass]="{ '-translate-x-[240px] ': !open, 'translate-x-0 ': open } ">
+
+  <section class="text-white mb-8 py-6 px-4 border-b border-white w-[95%] mx-auto ">
+    <button (click)="close()" class="mb-3 lg:hidden">
+      <i class="pi pi-arrow-left"></i>
+    </button>
+    <h1 class="font-bold text-3xl ">User manager</h1>
+  </section>
+
+  <ul class="px-4">
+    <li *ngFor="let item of items">
+      <a [routerLink]="item.link" routerLinkActive="bg-[#333a48]"
+         class="text-gray-300 mb-2 text-[20px] capitalize p-4 block rounded-md hover:bg-[#333a48] transition-colors">
+        <i [class]="item.icon + ' mr-2'"></i>
+        {{item.title}}
+      </a>
+    </li>
+  </ul>
+
+</aside>

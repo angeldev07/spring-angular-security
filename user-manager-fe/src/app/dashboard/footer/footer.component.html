@@ -1,0 +1,22 @@
+<footer class="w-full p-4">
+
+  <section class="flex justify-between items-center">
+    <!--    list social networks-->
+    <ul class="flex items-center gap-4">
+      <li *ngFor="let social of socialNetwork()">
+        <a class="flex items-center gap-2 " [href]="social.link" target="_blank">
+          <i [class]="social.icon"></i>
+          {{social.description}}
+        </a>
+      </li>
+    </ul>
+
+    <!--    copyright -->
+
+    <div>
+      Made with 💙 Angel Garcia
+    </div>
+
+  </section>
+
+</footer>

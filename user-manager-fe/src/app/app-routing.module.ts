@@ -1,8 +1,8 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {AuthComponent} from "./auth/auth.component";
-import {UsersComponent} from "./users/users.component";
 import {authGuard} from "./auth/guards/auth.guard";
+import {DashboardComponent} from "./dashboard/dashboard.component";
 
 const routes: Routes = [
   {
@@ -10,9 +10,10 @@ const routes: Routes = [
     component: AuthComponent
   },
   {
-    path: 'users',
-    component: UsersComponent,
-    canActivate: [authGuard]
+    path: 'backlog',
+    component: DashboardComponent,
+    loadChildren: () => import('./users/users.routes').then(r => r.USER_ROUTES)
+    // canActivate: [authGuard]
   },
   {
     path: '',
