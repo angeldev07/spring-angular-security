@@ -4,8 +4,10 @@ import com.jwt.JwtCourse.entities.User;
 import com.jwt.JwtCourse.exceptions.*;
 import com.jwt.JwtCourse.http.DTO.AddUserDTO;
 import com.jwt.JwtCourse.http.DTO.UserRegisterDTO;
+import com.jwt.JwtCourse.http.DTO.UserResponseDTO;
 import com.jwt.JwtCourse.http.requests.UpdatePassword;
 import com.jwt.JwtCourse.services.interfaces.IUserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,6 +38,14 @@ public class UserController extends ExceptionHandling {
         return ResponseEntity.ok(
                 userService.findAllUsers()
         );
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<UserResponseDTO> getUserByUsername(@PathVariable String username) throws UserNotFoundException {
+        UserResponseDTO user = new UserResponseDTO();
+        BeanUtils.copyProperties(userService.findUserByUsername(username), user);
+
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/update")
