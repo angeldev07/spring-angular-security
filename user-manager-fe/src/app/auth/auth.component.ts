@@ -18,8 +18,9 @@ export class AuthComponent {
   constructor(
     private authService: LoginService,
     private fb: FormBuilder,
-    private  router: Router
+    private router: Router
   ) {
+
     this.loginForm = this.fb.group({
       username: ['07409', [Validators.required]],
       password: ['angel123', [Validators.required]]
@@ -31,7 +32,7 @@ export class AuthComponent {
     const password = this.loginForm.controls['password'].value
     //suscribe the login method
     this.authService.login(username, password).subscribe({
-      next: ok => this.router.navigateByUrl('/users'),
+      next: ok => this.router.navigateByUrl('backlog/users'),
       error: error => console.log("jaja")
     });
   }

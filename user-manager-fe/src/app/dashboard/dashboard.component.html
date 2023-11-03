@@ -6,7 +6,7 @@
   <!--  main content-->
   <section class=" w-full h-full max-h-full lg:w-[calc(100%-240px)] transition-transform lg:translate-x-[240px]">
     <!--  navbar -->
-    <app-navbar/>
+    <app-navbar [username]="user()!.firstName" [rol]="user()!.role" />
 
     <main class="p-4 w-full h-5/6 max-h-full bg-[#f1f5f9]">
       <router-outlet/>

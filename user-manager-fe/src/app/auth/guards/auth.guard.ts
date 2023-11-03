@@ -11,3 +11,14 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   return isLogin;
 };
+
+export const loginGuard: CanActivateFn = (route, state) => {
+  const isLogin = inject(LoginService).isLogin
+
+  if (isLogin) {
+    inject(Router).navigateByUrl('/backlog')
+  }
+
+  return !isLogin;
+};
+

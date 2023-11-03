@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, catchError, map, Observable, tap, throwError} from "rxjs";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {environmentDev} from "../../environment/environment.dev";
+import {Router} from "@angular/router";
 
 interface UserLogin {
   username: string
@@ -19,20 +20,39 @@ interface LoginResponseDTO {
 export class LoginService {
 
   private _currentUser: BehaviorSubject<UserLogin>
-  private token: string;
+  private _token: string;
   private _isLogin: boolean;
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router
   ) {
-    this.token = '';
-    this._isLogin = false;
+
+    const currentSession = JSON.parse(localStorage.getItem('user') ?? '{}')
     this._currentUser = new BehaviorSubject<UserLogin>({} as UserLogin);
+
+    if (currentSession['token']) {
+
+      const {token, username} = currentSession
+      this._token = token
+      this._isLogin = true
+      this._currentUser.next({username})
+      return
+
+    }
+
+    this._token = '';
+    this._isLogin = false;
+
   }
 
 
   get currentUser(): Observable<UserLogin> {
     return this._currentUser.asObservable();
+  }
+
+  get token(){
+    return this._token
   }
 
 
@@ -49,7 +69,7 @@ export class LoginService {
         return this.mapAnswer(res)
       }),
       tap(({token, username}) => {
-        this.saveToken(token)
+        this.saveOnLocal('user', {token, username})
         this._currentUser.next({username})
         this._isLogin = true;
       }),
@@ -58,6 +78,14 @@ export class LoginService {
         return throwError(() => new Error(err.error?.message));
       })
     )
+  }
+
+  public logout() {
+    localStorage.clear()
+    this._token = ''
+    this._isLogin = false;
+    this._currentUser.next({username: ''});
+    this.router.navigate(['/auth'])
   }
 
   private mapAnswer(res: any): LoginResponseDTO {
@@ -69,7 +97,7 @@ export class LoginService {
 
   }
 
-  private saveToken(token: string) {
-    localStorage.setItem("token", token);
+  private saveOnLocal(key: string, value: any) {
+    localStorage.setItem(key, JSON.stringify(value));
   }
 }
