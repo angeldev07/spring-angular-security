@@ -31,6 +31,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscriptionCurrentUser$ = this.auth.currentUser.subscribe({
       next: ({username}) => {
+        if(! username) return 
         this.userService.getUser(username).subscribe({
           next: value => {
             this.user.update(() => value)
@@ -43,6 +44,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptionCurrentUser$.unsubscribe()
+    this.user.set({})
   }
 
 }
