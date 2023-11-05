@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping( "/user")
@@ -34,9 +35,13 @@ public class UserController extends ExceptionHandling {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> home () {
+    public ResponseEntity<List<UserResponseDTO>> home () {
         return ResponseEntity.ok(
-                userService.findAllUsers()
+                userService.findAllUsers().stream().map(user -> {
+                    UserResponseDTO userResponseDTO = new UserResponseDTO();
+                    BeanUtils.copyProperties(user, userResponseDTO);
+                    return userResponseDTO;
+                }).collect(Collectors.toList())
         );
     }
 
