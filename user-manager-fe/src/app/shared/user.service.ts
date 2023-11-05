@@ -3,7 +3,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environmentDev} from "../environment/environment.dev";
 import {LoginService} from "../auth/services/login.service";
 import {map, tap} from "rxjs";
-
+import { mappedResponse } from './map/UserDTOMapped'
 export interface UserDTO {
   firstName?: string;
   lastName?: string;
@@ -24,6 +24,8 @@ export interface UserDTO {
 })
 export class UserService {
 
+  mappedResponse = mappedResponse;
+
   constructor(
     private http: HttpClient,
     private auth: LoginService
@@ -37,34 +39,5 @@ export class UserService {
     )
   }
 
-  private mappedResponse(res: any): UserDTO {
-    const {
-      firstName,
-      lastName,
-      username,
-      email,
-      profileImgUrl,
-      lastLoginDateDisplay,
-      joinDate,
-      role,
-      authorities,
-      active,
-      notLocked
-    } = res
-
-    return {
-      firstName,
-      lastName,
-      username,
-      email,
-      profileImgUrl,
-      lastLoginDateDisplay,
-      joinDate,
-      role,
-      authorities,
-      active,
-      notLocked
-    }
-  }
 
 }
