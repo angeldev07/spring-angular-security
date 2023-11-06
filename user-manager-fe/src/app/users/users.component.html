@@ -14,7 +14,7 @@
     <ng-template pTemplate="body" let-user>
       <tr>
         <td class="text-center">
-          <p-avatar icon="pi pi-user" styleClass="mr-2" shape="circle" size="large"></p-avatar>
+          <p-avatar [image]="user.profileImgUrl" styleClass="mr-2" shape="circle" size="large"></p-avatar>
         </td>
         <td class="text-center">{{user.firstName}}</td>
         <td class="text-center">{{user.lastName}}</td>

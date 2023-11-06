@@ -20,8 +20,17 @@ export class UsersService {
   ) {
 
     this.httpHeaders = new HttpHeaders({'Authorization': this.auth.token})
+
+    const users = JSON.parse( localStorage.getItem('users') ?? '{}'  )
+
     this._users = new BehaviorSubject<Array<UserDTO> >([])
-    this.initialize()
+
+    if(users.length > 0){
+      this._users.next(users)
+      console.log('aca')
+    }
+    else
+      this.initialize()
 
   }
 
@@ -45,6 +54,7 @@ export class UsersService {
     this.getAllUsers().subscribe({
       next: res => {
         this._users.next(res)
+        localStorage.setItem('users', JSON.stringify(res))
       }
     })
   }

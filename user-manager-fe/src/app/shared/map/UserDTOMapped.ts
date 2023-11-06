@@ -20,7 +20,7 @@ export const mappedResponse = (res: any): UserDTO => {
     lastName,
     username,
     email,
-    profileImgUrl,
+    profileImgUrl: profileImgUrl ?? `https://robohash.org/${username}` ,
     lastLoginDateDisplay,
     joinDate,
     role,
