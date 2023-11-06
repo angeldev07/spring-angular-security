@@ -1,30 +1,49 @@
-<div class="bg-white rounded-md">
-  <p-table [value]="usersList()" styleClass="p-datatable-striped">
-    <ng-template pTemplate="header">
-      <tr>
-        <th class="text-center">Photo</th>
-        <th class="text-center">First name </th>
-        <th class="text-center">Last name</th>
-        <th class="text-center">Username</th>
-        <th class="text-center">email</th>
-        <th class="text-center">Status</th>
-        <th class="text-center">actions</th>
+<div class="bg-white rounded-md px-2">
+  <p-table [value]="usersList()"
+           styleClass="p-datatable-striped"
+           selectionMode="single"
+           [(selection)]="userSelected"
+           (onRowSelect)="isUserSelected = true"
+           [paginator]="true"
+           [rows]="10"
+           [rowsPerPageOptions]="[10, 25, 50]"
+           [showCurrentPageReport]="true"
+           currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
+           [globalFilterFields]="['firstName', 'lastName', 'email', 'username']"
+           [columns]="cols"
+           #dt1
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex">
+        <div class="ml-auto">
+          <input pInputText class="py-2 px-4" type="text" (input)="filterUser($event, dt1)" placeholder="Search keyword" />
+          <button class="bg-emerald-700 text-white py-2 px-4 rounded-r-md transition-colors hover:bg-emerald-600" (click)="dt1.clear()">
+            <i class="pi pi-undo"></i>
+          </button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr >
+        <th *ngFor="let col of columns" class="text-center bg-emerald-700 text-white first:rounded-tl-md last:rounded-tr-md">
+          {{col.label}}
+        </th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-user>
-      <tr>
+      <tr [pSelectableRow]="user">
         <td class="text-center">
           <p-avatar [image]="user.profileImgUrl" styleClass="mr-2" shape="circle" size="large"></p-avatar>
         </td>
         <td class="text-center">{{user.firstName}}</td>
         <td class="text-center">{{user.lastName}}</td>
         <td class="text-center">{{user.username}}</td>
-        <td class="text-center">{{user.email}}</td>
+        <td class="text-center ">{{user.email}}</td>
         <td class="text-center">
           <p-tag [value]="user.active ? 'Active':'Inactive'" [severity]="user.active ? 'success': 'danger'"></p-tag>
         </td>
         <td>
-          <p-selectButton [options]="options"  optionLabel="label" optionValue="value">
+          <p-selectButton [options]="options" optionLabel="label" optionValue="value">
             <ng-template let-item pTemplate>
               <i [class]="item.label"></i>
             </ng-template>
@@ -35,4 +54,4 @@
   </p-table>
 </div>
 
-
+<app-user-modal [(isUserSelected)]="isUserSelected" [(userSelected)]="userSelected" />

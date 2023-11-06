@@ -1,0 +1,53 @@
+<p-dialog [modal]="true"
+          [draggable]="false"
+          [resizable]="false"
+          [(visible)]="isUserSelected"
+          [maskStyleClass]="'z-10'"
+          (onHide)="resetUserSelected()"
+          [header]="userSelected?.firstName + ' ' + userSelected?.lastName  "
+>
+  <div class="border  rounded-md">
+    <section class="p-4 flex items-center border-b border-gray-100 mb-6">
+      <img [src]="userSelected?.profileImgUrl" [alt]="userSelected?.firstName" width="150px" height="150px">
+      <div class="flex gap-4">
+        <div>
+          <strong class="block">{{userSelected?.firstName +' '+userSelected?.lastName}}</strong>
+          <p >{{userSelected?.username}}</p>
+          <p >
+            Status:
+            <p-tag [value]="userSelected?.active ? 'Active':'Inactive'" [severity]="userSelected?.active ? 'success': 'danger'" />
+          </p>
+          <p>
+            last login:
+            {{userSelected?.lastLoginDateDisplay | date}}
+          </p>
+        </div>
+        <p>
+          joined:
+          {{userSelected?.joinDate | date}}
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <ul class="">
+        <li class="flex items-center justify-between p-4 border-b border-t rounded-t-sm">
+          {{userSelected?.email}}
+          <i class="pi pi-envelope"></i>
+        </li>
+        <li class="flex items-center justify-between p-4 border-b">
+          {{userSelected?.role?.substring('ROLE_'.length)}}
+          <i class="pi pi-shield"></i>
+        </li>
+        <li class="flex items-center justify-between p-4 ">
+          Account {{userSelected?.notLocked ? 'Unlocked': 'Locked' }}
+          <i class="pi " [ngClass]="{'pi-lock-open text-green-500': userSelected?.notLocked, 'pi-lock text-red-500': !userSelected?.notLocked}"></i>
+        </li>
+      </ul>
+    </section>
+
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton class="bg-cyan-600 text-white text-center px-4 py-2" (click)="resetUserSelected()">Close</button>
+  </ng-template>
+</p-dialog>
