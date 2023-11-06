@@ -1,0 +1,101 @@
+
+<!-- General container  -->
+<section class="flex flex-col gap-4 md:flex-row">
+
+<!--  Logout and permissions box -->
+
+  <div class="border p-4 flex-1">
+    <section class="mb-10">
+      <div class="flex flex-column flex-wrap justify-center gap-6 md:flex-row md:justify-normal" >
+        <div class="bg-white">
+          <img [src]="user().profileImgUrl" [alt]="user().firstName" width="150px" height="150px">
+        </div>
+        <div class="flex gap-4 flex-1">
+          <div class="flex-1">
+            <strong class="block">{{user().firstName +' '+user().lastName}}</strong>
+            <p >{{user().username}}</p>
+            <p >
+              Status:
+              <p-tag [value]="user().active ? 'Active':'Inactive'" [severity]="user().active ? 'success': 'danger'" />
+            </p>
+            <p>
+              last login:
+              {{user().lastLoginDateDisplay | date}}
+            </p>
+            <button class="bg-gray-600 my-3 flex items-center gap-2 text-sm text-white py-2 px-4 rounded-md transition-colors hover:bg-gray-500">
+              <i class="pi pi-camera"></i>
+              <span class="">change photo</span>
+            </button>
+          </div>
+          <p class="text-right">
+            joined:
+            {{user().joinDate | date}}
+          </p>
+        </div>
+      </div>
+    </section>
+    <!-- form -->
+    <section class="w-full "  >
+
+      <form>
+      <!--   Names   -->
+        <div class="flex flex-wrap justify-center sm:flex-nowrap gap-2 w-full mb-8">
+
+          <span class="p-float-label inline-block w-full">
+            <input pInputText id="firstName" class="w-full py-2 px-4"/>
+            <label htmlFor="username">First Name</label>
+          </span>
+
+          <span class="p-float-label inline-block w-full">
+            <input pInputText id="lastName" class="w-full py-2 px-4"/>
+            <label htmlFor="username">Last Name</label>
+          </span>
+
+        </div>
+
+        <div class="flex flex-col gap-6">
+          <span class="p-float-label inline-block w-full">
+            <input pInputText id="username" class="w-full py-2 px-4"/>
+            <label htmlFor="username">Username</label>
+          </span>
+
+          <span class="p-float-label inline-block w-full">
+            <input pInputText id="email" class="w-full py-2 px-4" type="email"/>
+            <label htmlFor="username">email</label>
+          </span>
+
+          <span class="p-float-label inline-block w-full">
+            <p-dropdown placeholder="Select a City" optionLabel="name" inputId="float-label" [styleClass]=" 'w-full' "></p-dropdown>
+            <label htmlFor="float-label">Select a City</label>
+          </span>
+
+          <div class="px-4">
+            <span class="font-bold">Account settings </span>
+            <div class="flex flex-col gap-4 pt-2">
+              <p-checkbox name="groupname" value="val1" label="Active" ></p-checkbox>
+              <p-checkbox name="groupname" value="val1" label="Unlocked" ></p-checkbox>
+            </div>
+          </div>
+
+        </div>
+
+      </form>
+    </section>
+  </div>
+
+
+  <div class="flex items-center md:flex-col   ">
+
+    <div>
+      <h3 class="font-bold">Permissions from role </h3>
+    </div>
+
+    <div >
+      <button class="bg-gray-600 text-white py-2 px-4 rounded-md transition-colors hover:bg-gray-500">
+          <i class="pi pi-sign-out"></i>
+        <span class="p-button-label">logout</span>
+      </button>
+    </div>
+  </div>
+
+</section>

@@ -35,7 +35,7 @@ export class UserService {
 
   }
 
-  public getUser(username: string) {
+  public getUser(username: string ='') {
 
     const userLocal = JSON.parse(localStorage.getItem('user') ?? '')
 
