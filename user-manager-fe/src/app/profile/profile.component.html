@@ -4,11 +4,11 @@
 
 <!--  Logout and permissions box -->
 
-  <div class="border p-4 flex-1">
+  <div class="border p-4 flex-1 shadow-2xl rounded-md">
     <section class="mb-10">
       <div class="flex flex-column flex-wrap justify-center gap-6 md:flex-row md:justify-normal" >
-        <div class="bg-white">
-          <img [src]="user().profileImgUrl" [alt]="user().firstName" width="150px" height="150px">
+        <div class="bg-gray-200 rounded-md border h-[150px] w-[150px]">
+          <img [src]="user().profileImgUrl" [alt]="user().firstName" class="w-full h-full">
         </div>
         <div class="flex gap-4 flex-1">
           <div class="flex-1">
@@ -22,10 +22,16 @@
               last login:
               {{user().lastLoginDateDisplay | date}}
             </p>
-            <button class="bg-gray-600 my-3 flex items-center gap-2 text-sm text-white py-2 px-4 rounded-md transition-colors hover:bg-gray-500">
-              <i class="pi pi-camera"></i>
-              <span class="">change photo</span>
-            </button>
+            <div class="inline-block">
+              <p-fileUpload #fileUpload
+                            mode="basic"
+                            chooseLabel="Choose"
+                            name="profileImgUrl"
+                            accept="image/*"
+                            [maxFileSize]="1000000"
+                            (onSelect)="onSelect($event, fileUpload)"
+                            [styleClass]="'inline-block  bg-gray-600 my-3 flex items-center gap-2 text-sm text-white py-2 px-4 rounded-md transition-colors hover:bg-gray-500'"></p-fileUpload>
+            </div>
           </div>
           <p class="text-right">
             joined:
@@ -34,20 +40,21 @@
         </div>
       </div>
     </section>
+
     <!-- form -->
-    <section class="w-full "  >
+    <section class="w-full px-4"  >
 
-      <form>
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
       <!--   Names   -->
-        <div class="flex flex-wrap justify-center sm:flex-nowrap gap-2 w-full mb-8">
+        <div class="flex flex-wrap justify-center sm:flex-nowrap gap-4 w-full mb-8">
 
-          <span class="p-float-label inline-block w-full">
-            <input pInputText id="firstName" class="w-full py-2 px-4"/>
+          <span class="p-float-label inline-block w-full " >
+            <input formControlName="firstName" pInputText  id="firstName" class="w-full py-2 px-4 {{ userForm.get('firstName')?.valid ? 'border-green-500' : 'border-red-500' }}"  />
             <label htmlFor="username">First Name</label>
           </span>
 
           <span class="p-float-label inline-block w-full">
-            <input pInputText id="lastName" class="w-full py-2 px-4"/>
+            <input formControlName="lastName" pInputText id="lastName" class="w-full py-2 px-4"/>
             <label htmlFor="username">Last Name</label>
           </span>
 
@@ -55,28 +62,30 @@
 
         <div class="flex flex-col gap-6">
           <span class="p-float-label inline-block w-full">
-            <input pInputText id="username" class="w-full py-2 px-4"/>
-            <label htmlFor="username">Username</label>
+            <input formControlName="username"  pInputText id="username" class="w-full py-2 px-4"/>
+            <label htmlFor="username">Username (read-only)</label>
           </span>
 
           <span class="p-float-label inline-block w-full">
-            <input pInputText id="email" class="w-full py-2 px-4" type="email"/>
+            <input formControlName="email" pInputText id="email" class="w-full py-2 px-4" type="email"/>
             <label htmlFor="username">email</label>
           </span>
 
-          <span class="p-float-label inline-block w-full">
-            <p-dropdown placeholder="Select a City" optionLabel="name" inputId="float-label" [styleClass]=" 'w-full' "></p-dropdown>
-            <label htmlFor="float-label">Select a City</label>
+          <span class="p-float-label inline-block w-full ">
+            <p-dropdown formControlName="role" [options]="[{role: user().role!.substring('role_'.length)}]" placeholder="Rol" optionLabel="role" inputId="float-label" [styleClass]=" 'w-full' "></p-dropdown>
+            <label htmlFor="float-label">Current rol (read-only)</label>
           </span>
 
           <div class="px-4">
             <span class="font-bold">Account settings </span>
             <div class="flex flex-col gap-4 pt-2">
-              <p-checkbox name="groupname" value="val1" label="Active" ></p-checkbox>
-              <p-checkbox name="groupname" value="val1" label="Unlocked" ></p-checkbox>
+              <p-checkbox formControlName="active"  label="Active" [binary]="true" [styleClass]=" 'cursor-pointer' "></p-checkbox>
+              <p-checkbox formControlName="nonLocked"  label="Unlocked" [binary]="true"  [styleClass]=" 'cursor-pointer' "></p-checkbox>
             </div>
           </div>
-
+          <div  class="ml-auto">
+            <button type="submit" class="bg-cyan-800 text-white py-2 px-4 rounded-md" pButton>Save</button>
+          </div>
         </div>
 
       </form>
