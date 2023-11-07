@@ -19,8 +19,8 @@ public class AddUserDTO {
     private String username;
     private String email;
     private String role;
-    private boolean isNonLocked;
-    private boolean isActive;
+    private boolean nonLocked;
+    private boolean active;
     private MultipartFile profileImg;
 
 }

@@ -116,6 +116,7 @@ public class UserService implements IUserService {
         currentUser.setUsername(userDTO.getUsername());
         currentUser.setEmail(userDTO.getEmail());
         currentUser.setRole(Role.valueOf(userDTO.getRole()).name());
+        currentUser.setAuthorities(Role.valueOf(userDTO.getRole()).getAuthorities());
         currentUser.setNotLocked(userDTO.isNonLocked());
         currentUser.setActive(userDTO.isActive());
         userRepository.save(currentUser);

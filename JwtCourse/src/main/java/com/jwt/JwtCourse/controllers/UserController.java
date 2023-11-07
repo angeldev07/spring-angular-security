@@ -54,7 +54,9 @@ public class UserController extends ExceptionHandling {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<User> updateUser(@RequestBody AddUserDTO userDTO) throws IOException {
+    public ResponseEntity<User> updateUser(@RequestPart("userData") AddUserDTO userDTO,
+                                           @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) throws IOException {
+        userDTO.setProfileImg(profileImg);
         User user = userService.updateUser(userDTO);
         return ResponseEntity.ok(user);
     }
