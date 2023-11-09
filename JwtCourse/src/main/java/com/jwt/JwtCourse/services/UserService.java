@@ -167,13 +167,14 @@ public class UserService implements IUserService {
             }
             Files.deleteIfExists(Paths.get(userFolder + user.getUsername() + DOT + JPG_EXTENSION));
             Files.copy(profileImg.getInputStream(), userFolder.resolve(user.getUsername() + DOT + JPG_EXTENSION), REPLACE_EXISTING);
-            user.setProfileImgUrl(getPathUserProfile(user.getUsername()));
+            user.setProfileImgUrl(getPathUserProfile( USER_IMG_PATH + user.getUsername() + FORWARD_SLASH + user.getUsername() + DOT + JPG_EXTENSION ));
             userRepository.save(user);
         }
     }
 
     private String getPathUserProfile(String username) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path(USER_IMG_PATH + username + FORWARD_SLASH + username + DOT + JPG_EXTENSION).toUriString();
+//        return ServletUriComponentsBuilder.fromCurrentContextPath().path(USER_IMG_PATH + username + FORWARD_SLASH + username + DOT + JPG_EXTENSION).toUriString();
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path(username).toUriString();
     }
 
     private String getTemporaryProfileImgUrl(String username) {
