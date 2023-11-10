@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, signal, WritableSignal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {UserDTO, UserService} from "../shared/user.service";
-import {Subscription} from "rxjs";
+import {Subscription, tap} from "rxjs";
 import {TagModule} from "primeng/tag";
 import {InputTextModule} from "primeng/inputtext";
 import {DropdownModule} from "primeng/dropdown";
@@ -9,15 +9,19 @@ import {CheckboxModule} from 'primeng/checkbox';
 import {FileSelectEvent, FileUpload, FileUploadModule} from 'primeng/fileupload';
 import {FormBuilder, FormControl, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ButtonModule} from "primeng/button";
-import {HttpClient} from "@angular/common/http";
+import {ToastModule} from 'primeng/toast';
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
+import {MessageService} from 'primeng/api';
 import {environmentDev} from "../environment/environment.dev";
+import {HttpResponseDTO} from "../shared/map/HttpResponseDTO";
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TagModule, InputTextModule, DropdownModule, CheckboxModule, ButtonModule, FileUploadModule],
+  imports: [CommonModule, ReactiveFormsModule, ToastModule, TagModule, InputTextModule, DropdownModule, CheckboxModule, ButtonModule, FileUploadModule],
   templateUrl: './profile.component.html',
-  styles: []
+  styles: [],
+  providers: [MessageService]
 })
 export class ProfileComponent implements OnInit, OnDestroy {
 
@@ -37,7 +41,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     private fb: FormBuilder,
-    private http: HttpClient
+    private http: HttpClient,
+    private messageService: MessageService
   ) {
     this.user = signal({} as UserDTO);
 
@@ -63,6 +68,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.userSubscription$.unsubscribe()
+    this.user.set({});
   }
 
   onSubmit() {
@@ -75,7 +81,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     const formData = new FormData();
-    formData.append('userData', new Blob([JSON.stringify(userData)], { type: 'application/json' }));
+    formData.append('userData', new Blob([JSON.stringify(userData)], {type: 'application/json'}));
     formData.append('profileImg', this.userForm.get('profileImg')?.value)
 
     this.http.put(`${environmentDev.url}/user/update`, formData).subscribe({
@@ -90,13 +96,45 @@ export class ProfileComponent implements OnInit, OnDestroy {
     })
   }
 
-  onSelect(event: FileSelectEvent, upload: FileUpload) {
+  onSelect(event: FileSelectEvent) {
     const reader = new FileReader();
     reader.readAsDataURL(event.currentFiles[0]);
-    this.userForm.controls.profileImg.setValue(event.currentFiles[0])
     reader.onload = () => {
       this.user.mutate(user => user.profileImgUrl = reader.result as string)
     };
-    upload._files = []
+
+  }
+
+  onUpload(event: FileSelectEvent, upload: FileUpload) {
+    //change the user profile image at the moment of upload to avoid the user to wait for the server response
+    this.onSelect(event)
+
+    //created a dataform to send the image and the username to the server
+    const formData = new FormData();
+    formData.append('profileImg', event.currentFiles[0])
+    formData.append("username", `${this.user().username}`)
+
+    //clear the upload component
+    upload.clear()
+
+    //send the request to the server
+    this.userService.updateProfileImage(formData).pipe(
+      tap(res => {
+
+        if (res instanceof HttpErrorResponse)
+          return
+
+        const userLocal = JSON.parse(localStorage.getItem('user') ?? '')
+        userLocal.user.profileImgUrl = this.user().profileImgUrl
+        localStorage.setItem('user', JSON.stringify(userLocal))
+
+      }),
+    ).subscribe({
+      next: (res: HttpResponseDTO) => {
+        this.messageService.add({severity: 'success', summary: 'Profile img updated!', detail: `${res.message}`});
+      },
+      error: (err: HttpErrorResponse) => this.messageService.add({severity: 'error', summary: 'Profile img not updated!', detail: `${err.error.message}`}),
+    })
+
   }
 }

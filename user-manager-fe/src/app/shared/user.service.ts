@@ -1,9 +1,10 @@
 import {Injectable, signal, WritableSignal} from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {environmentDev} from "../environment/environment.dev";
 import {LoginService} from "../auth/services/login.service";
-import {map, Observable, tap} from "rxjs";
+import {catchError, map, Observable, tap} from "rxjs";
 import {mappedResponse} from './map/UserDTOMapped'
+import {mappedHttpResponse} from "./map/HttpResponseDTO";
 
 export interface UserDTO {
   firstName?: string;
@@ -55,6 +56,21 @@ export class UserService {
       subscriber.complete()
     })
   }
+
+
+  public updateProfileImage(formData: FormData) {
+    const headers = new HttpHeaders({'Authorization': this.auth.token})
+    return this.http.patch(`${environmentDev.url}/user/update-profile-img`, formData, {headers}).pipe(
+      map((res: any) => mappedHttpResponse(res)),
+      catchError((err: HttpErrorResponse) => {
+        return new Observable<HttpErrorResponse>(subscriber => {
+          subscriber.next(err)
+          subscriber.complete()
+        })
+      })
+    )
+  }
+
 
 
 }
