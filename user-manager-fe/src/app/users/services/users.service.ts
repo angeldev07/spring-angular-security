@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {LoginService} from "../../auth/services/login.service";
 import {environmentDev} from "../../environment/environment.dev";
-import {BehaviorSubject, catchError, map, Observable, throwError} from "rxjs";
+import {BehaviorSubject, catchError, map, Observable, tap, throwError} from "rxjs";
 import {mappedResponse} from "../../shared/map/UserDTOMapped";
 import {UserDTO} from "../../shared/user.service";
 
@@ -12,7 +12,6 @@ import {UserDTO} from "../../shared/user.service";
 export class UsersService {
 
   private httpHeaders: HttpHeaders;
-  private _users: BehaviorSubject< Array<UserDTO> >
 
   constructor(
     private http: HttpClient,
@@ -21,25 +20,9 @@ export class UsersService {
 
     this.httpHeaders = new HttpHeaders({'Authorization': this.auth.token})
 
-    const users = JSON.parse( localStorage.getItem('users') ?? '{}'  )
-
-    this._users = new BehaviorSubject<Array<UserDTO> >([])
-
-    if(users.length > 0){
-      this._users.next(users)
-      console.log('aca')
-    }
-    else
-      this.initialize()
-
   }
 
-
-  get users(): Observable<Array<UserDTO>> {
-    return this._users.asObservable();
-  }
-
-  private getAllUsers() {
+  public getAllUsers() {
     return this.http.get(`${environmentDev.url}/user`, {headers: this.httpHeaders}).pipe(
       map((res: any) => {
         return res.map((user: any) => mappedResponse(user))
@@ -50,12 +33,4 @@ export class UsersService {
     )
   }
 
-  private initialize() {
-    this.getAllUsers().subscribe({
-      next: res => {
-        this._users.next(res)
-        localStorage.setItem('users', JSON.stringify(res))
-      }
-    })
-  }
 }

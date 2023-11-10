@@ -4,7 +4,7 @@ import {Table, TableModule} from 'primeng/table';
 import {UserDTO} from "../shared/user.service";
 import {UsersService} from "./services/users.service";
 import {ButtonModule} from "primeng/button";
-import {Subscription} from "rxjs";
+import {Subscription, tap} from "rxjs";
 import {AvatarModule} from "primeng/avatar";
 import {SelectButtonModule} from "primeng/selectbutton";
 import {TagModule} from "primeng/tag";
@@ -28,13 +28,13 @@ export class UsersComponent implements OnInit, OnDestroy {
   userSelected: UserDTO | null = null
   isUserSelected = false
   cols = [
-    { label: 'Photo', prop: 'profileImgUrl'},
-    { label: 'First name', prop: 'firstName'},
-    { label: 'Last name', prop: 'lastName'},
-    { label: 'Username', prop: 'username'},
-    { label: 'Email', prop: 'email'},
-    { label: 'Status', prop: 'active'},
-    { label: 'Actions'}
+    {label: 'Photo', prop: 'profileImgUrl'},
+    {label: 'First name', prop: 'firstName'},
+    {label: 'Last name', prop: 'lastName'},
+    {label: 'Username', prop: 'username'},
+    {label: 'Email', prop: 'email'},
+    {label: 'Status', prop: 'active'},
+    {label: 'Actions'}
   ]
 
   //Photo	First name	Last name	Username	email	Status	actions
@@ -47,15 +47,19 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.userSus$ = this.userService.users.subscribe({
+
+    this.userSus$ = this.userService.getAllUsers().subscribe({
       next: res => {
         this.usersList.set(res)
+        console.log('subscribed to users')
       }
     })
+
   }
 
   ngOnDestroy() {
     this.userSus$.unsubscribe()
+    this.usersList.set([])
   }
 
   filterUser(event: any, table: Table) {
