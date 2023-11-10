@@ -6,6 +6,7 @@ import com.jwt.JwtCourse.http.DTO.AddUserDTO;
 import com.jwt.JwtCourse.http.DTO.UserRegisterDTO;
 import com.jwt.JwtCourse.http.DTO.UserResponseDTO;
 import com.jwt.JwtCourse.http.requests.UpdatePassword;
+import com.jwt.JwtCourse.http.responses.HttpResponse;
 import com.jwt.JwtCourse.services.interfaces.IUserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,9 +76,12 @@ public class UserController extends ExceptionHandling {
 
 
     @PatchMapping(value = "/update-profile-img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateProfileImg (@RequestParam("email") String email, @RequestPart("profileImg") MultipartFile img) throws IOException, UsernameNotFoundException {
-        userService.updateProfileImg(email, img);
-        return ResponseEntity.ok(true);
+    public ResponseEntity<?> updateProfileImg (@RequestPart("username") String username, @RequestPart("profileImg") MultipartFile img) throws IOException, UsernameNotFoundException {
+        userService.updateProfileImg(username, img);
+        return new ResponseEntity<>(
+                new HttpResponse(HttpStatus.OK.value(), HttpStatus.OK, HttpStatus.OK.getReasonPhrase() ,"Photo updated successfuly" ),
+                HttpStatus.OK
+        );
     }
 
     @PostMapping("/register")

@@ -134,7 +134,7 @@ public class UserService implements IUserService {
 
     @Override
     public void updateProfileImg(String username, MultipartFile profileImg) throws IOException, UsernameNotFoundException {
-        User user = userRepository.findUserByUsername(username).orElseThrow();
+        User user = userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException("The user does not exists") );
         saveProfileImg(user, profileImg);
     }
 
