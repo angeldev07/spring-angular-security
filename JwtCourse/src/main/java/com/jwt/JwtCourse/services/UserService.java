@@ -89,15 +89,15 @@ public class UserService implements IUserService {
                 .lastName(userDTO.getLastName())
                 .username(userDTO.getUsername())
                 .email(userDTO.getEmail())
+                .userId(UUID.randomUUID().toString())
                 .role(Role.valueOf(userDTO.getRole()).name())
                 .authorities(Role.valueOf(userDTO.getRole()).getAuthorities())
                 .isNotLocked(userDTO.isNonLocked())
                 .isActive(userDTO.isActive())
-                .profileImgUrl(getTemporaryProfileImgUrl(userDTO.getUsername()))
+                .profileImgUrl(null)
                 .joinDate(new Date())
                 .build();
         userRepository.save(user);
-        saveProfileImg(user, userDTO.getProfileImg());
         return user;
     }
 
@@ -161,24 +161,22 @@ public class UserService implements IUserService {
 
     private void saveProfileImg(User user, MultipartFile profileImg) throws IOException {
         if (profileImg != null) {
+
             Path userFolder = Paths.get(USER_FOLDER + user.getUsername()).toAbsolutePath().normalize();
+
             if (!Files.exists(userFolder)) {
                 Files.createDirectories(userFolder);
             }
-            Files.deleteIfExists(Paths.get(userFolder + user.getUsername() + DOT + JPG_EXTENSION));
-            Files.copy(profileImg.getInputStream(), userFolder.resolve(user.getUsername() + DOT + JPG_EXTENSION), REPLACE_EXISTING);
+
+            Files.deleteIfExists(Path.of(USER_FOLDER + user.getUsername() + FORWARD_SLASH + user.getUsername() + DOT + JPG_EXTENSION ));
+            Files.write(userFolder.resolve(user.getUsername() + DOT + JPG_EXTENSION), profileImg.getBytes());
             user.setProfileImgUrl(getPathUserProfile( USER_IMG_PATH + user.getUsername() + FORWARD_SLASH + user.getUsername() + DOT + JPG_EXTENSION ));
             userRepository.save(user);
         }
     }
 
     private String getPathUserProfile(String username) {
-//        return ServletUriComponentsBuilder.fromCurrentContextPath().path(USER_IMG_PATH + username + FORWARD_SLASH + username + DOT + JPG_EXTENSION).toUriString();
         return ServletUriComponentsBuilder.fromCurrentContextPath().path(username).toUriString();
-    }
-
-    private String getTemporaryProfileImgUrl(String username) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path(DEFAULT_USER_IMG_PATH + username).toUriString();
     }
 
 }
