@@ -51,7 +51,6 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.userSus$ = this.userService.getAllUsers().subscribe({
       next: res => {
         this.usersList.set(res)
-        console.log('subscribed to users')
       }
     })
 

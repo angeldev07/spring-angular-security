@@ -93,13 +93,18 @@
   </div>
 
 
-  <div class="flex items-center md:flex-col   ">
+  <div class="flex items-center md:flex-col-reverse md:justify-end  md:gap-6  ">
 
-    <div>
-      <h3 class="font-bold">Permissions from role </h3>
+    <div class="border p-4 rounded-md shadow-2xl w-full ">
+      <h3 class="font-bold mb-2">Permissions from role </h3>
+      <ul>
+        <li *ngFor="let permission of user().authorities">
+            <span>{{permission}}</span>
+        </li>
+      </ul>
     </div>
 
-    <div >
+    <div class="border p-4 rounded-md shadow-xl w-full flex justify-center">
       <button class="bg-gray-600 text-white py-2 px-4 rounded-md transition-colors hover:bg-gray-500">
           <i class="pi pi-sign-out"></i>
         <span class="p-button-label">logout</span>

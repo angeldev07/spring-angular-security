@@ -12,8 +12,8 @@ import {ButtonModule} from "primeng/button";
 import {ToastModule} from 'primeng/toast';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {MessageService} from 'primeng/api';
-import {environmentDev} from "../environment/environment.dev";
 import {HttpResponseDTO} from "../shared/map/HttpResponseDTO";
+import {UsersService} from "../users/services/users.service";
 
 @Component({
   selector: 'app-profile',
@@ -40,6 +40,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   constructor(
     private userService: UserService,
+    private usersService: UsersService,
     private fb: FormBuilder,
     private http: HttpClient,
     private messageService: MessageService
@@ -84,11 +85,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     formData.append('userData', new Blob([JSON.stringify(userData)], {type: 'application/json'}));
     formData.append('profileImg', this.userForm.get('profileImg')?.value)
 
-    this.http.put(`${environmentDev.url}/user/update`, formData).subscribe({
-      next: res => {
-        console.log(res)
+    this.usersService.updateUser(formData).subscribe({
+      next: (res: HttpResponseDTO) => {
+        this.messageService.add({severity: 'success', summary: 'User updated!', detail: `${res.message}`});
       },
-      error: err => console.log(err),
+      error: (err: HttpErrorResponse) => this.messageService.add({severity: 'error', summary: 'User not updated!', detail: `${err.error.message}`}),
       complete: () => {
         this.userForm.get('username')?.disable();
         this.userForm.get('role')?.disable();

@@ -5,6 +5,7 @@ import {environmentDev} from "../../environment/environment.dev";
 import {BehaviorSubject, catchError, map, Observable, tap, throwError} from "rxjs";
 import {mappedResponse} from "../../shared/map/UserDTOMapped";
 import {UserDTO} from "../../shared/user.service";
+import {mappedHttpResponse} from "../../shared/map/HttpResponseDTO";
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,15 @@ export class UsersService {
 
     this.httpHeaders = new HttpHeaders({'Authorization': this.auth.token})
 
+  }
+
+  public updateUser(formData: FormData) {
+    return this.http.put(`${environmentDev.url}/user/update`, formData).pipe(
+      map((res: any) => mappedHttpResponse(res)),
+      catchError((err: HttpErrorResponse) => {
+        return throwError(() => new Error(err.error?.message));
+      })
+    )
   }
 
   public getAllUsers() {
