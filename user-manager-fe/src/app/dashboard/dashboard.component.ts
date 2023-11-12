@@ -4,7 +4,6 @@ import {RouterOutlet} from "@angular/router";
 import {SidebarComponent} from "./sidebar/sidebar.component";
 import {NavbarComponent} from "./navbar/navbar.component";
 import {FooterComponent} from "./footer/footer.component";
-import {LoginService} from "../auth/services/login.service";
 import {UserDTO, UserService} from "../shared/user.service";
 import {Subscription} from "rxjs";
 
@@ -17,35 +16,28 @@ import {Subscription} from "rxjs";
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
-  user: WritableSignal<UserDTO >
-
+  user: WritableSignal<UserDTO>
   subscriptionCurrentUser$!: Subscription
-  subscriptionCurrentUserService$!: Subscription
 
   constructor(
     private userService: UserService,
-    private auth: LoginService
   ) {
     this.user = signal({} as UserDTO)
   }
 
   ngOnInit(): void {
-    this.subscriptionCurrentUser$ = this.auth.currentUser.subscribe({
-      next: ({username}) => {
-        if(! username) return
-        this.subscriptionCurrentUserService$ = this.userService.getUser(username).subscribe({
-          next: value => {
-            this.user.update(() => value)
-          }
-        })
+
+    this.subscriptionCurrentUser$ = this.userService.currentUser.subscribe({
+      next: value => {
+        this.user.update(() => value)
       }
     })
 
   }
 
+
   ngOnDestroy() {
     this.subscriptionCurrentUser$.unsubscribe()
-    this.subscriptionCurrentUserService$.unsubscribe()
     this.user.set({})
   }
 

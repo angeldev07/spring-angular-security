@@ -2,7 +2,7 @@ import {Injectable, signal, WritableSignal} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {environmentDev} from "../environment/environment.dev";
 import {LoginService} from "../auth/services/login.service";
-import {catchError, map, Observable, tap} from "rxjs";
+import {BehaviorSubject, catchError, map, Observable, take, tap} from "rxjs";
 import {mappedResponse} from './map/UserDTOMapped'
 import {mappedHttpResponse} from "./map/HttpResponseDTO";
 
@@ -26,35 +26,53 @@ export interface UserDTO {
 })
 export class UserService {
 
-  mappedResponse = mappedResponse;
+  _user: BehaviorSubject<UserDTO> = new BehaviorSubject<UserDTO>({} as UserDTO)
 
   constructor(
     private http: HttpClient,
     private auth: LoginService
   ) {
 
+    const userLocal = JSON.parse(localStorage.getItem('user') ?? '')
+
+    if(userLocal.user){
+      this._user.next(userLocal.user)
+      return
+    }
+
+    // else, get user from server
+    this.getCurrentUserRequest().subscribe({
+      next: res => {
+        this._user.next(res)
+      }
+    })
 
   }
 
-  public getUser(username: string ='') {
+  get currentUser(){
+    return this._user.asObservable()
+  }
 
+  public updateUserInfo() {
+    this.getCurrentUserRequest().subscribe({
+      next: res => {
+        this._user.next(res)
+      }
+    })
+  }
+
+  private getCurrentUserRequest(){
+    const headers = new HttpHeaders({'Authorization': this.auth.token})
     const userLocal = JSON.parse(localStorage.getItem('user') ?? '')
 
-    if (!userLocal.user) {
-      const headers = new HttpHeaders({'Authorization': this.auth.token})
-      return this.http.get(`${environmentDev.url}/user/${username}`, {headers}).pipe(
-        map((res: any) => this.mappedResponse(res)),
-        tap(res => {
-          userLocal.user = res
-          localStorage.setItem('user', JSON.stringify(userLocal))
-        })
-      )
-    }
+    return this.http.get(`${environmentDev.url}/user/${this.auth.username}`, {headers}).pipe(
+      map((res: any) => mappedResponse(res)),
+      tap(res => {
+        userLocal.user = res
+        localStorage.setItem('user', JSON.stringify(userLocal))
+      })
+    )
 
-    return new Observable<UserDTO>(subscriber => {
-      subscriber.next(userLocal.user)
-      subscriber.complete()
-    })
   }
 
 

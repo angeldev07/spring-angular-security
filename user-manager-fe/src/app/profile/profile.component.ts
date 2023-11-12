@@ -50,7 +50,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.userSubscription$ = this.userService.getUser().subscribe({
+    this.userSubscription$ = this.userService.currentUser.subscribe({
       next: res => {
         this.user.set({...res})
         this.userForm.patchValue({
@@ -88,8 +88,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.usersService.updateUser(formData).subscribe({
       next: (res: HttpResponseDTO) => {
         this.messageService.add({severity: 'success', summary: 'User updated!', detail: `${res.message}`});
+        this.userService.updateUserInfo() // update the user info in the navbar
       },
-      error: (err: HttpErrorResponse) => this.messageService.add({severity: 'error', summary: 'User not updated!', detail: `${err.error.message}`}),
+      error: (err: HttpErrorResponse) => this.messageService.add({
+        severity: 'error',
+        summary: 'User not updated!',
+        detail: `${err.error.message}`
+      }),
       complete: () => {
         this.userForm.get('username')?.disable();
         this.userForm.get('role')?.disable();
@@ -134,7 +139,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
       next: (res: HttpResponseDTO) => {
         this.messageService.add({severity: 'success', summary: 'Profile img updated!', detail: `${res.message}`});
       },
-      error: (err: HttpErrorResponse) => this.messageService.add({severity: 'error', summary: 'Profile img not updated!', detail: `${err.error.message}`}),
+      error: (err: HttpErrorResponse) => this.messageService.add({
+        severity: 'error',
+        summary: 'Profile img not updated!',
+        detail: `${err.error.message}`
+      }),
     })
 
   }

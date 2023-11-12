@@ -51,6 +51,10 @@ export class LoginService {
     return this._currentUser.asObservable();
   }
 
+  get username(){
+    return this._currentUser.value.username
+  }
+
   get token(){
     return this._token
   }
