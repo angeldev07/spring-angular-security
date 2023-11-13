@@ -43,7 +43,7 @@ export class UserService {
 
     this.auth.currentUser.subscribe({
       next: res => {
-        if(!res.username) return
+        if(res.username.length === 0) return
 
         this.getCurrentUserRequest().subscribe({
           next: res => {
@@ -77,7 +77,7 @@ export class UserService {
   }
 
   private getCurrentUserRequest(){
-    const headers = new HttpHeaders({'Authorization': this.auth.token})
+    const headers = new HttpHeaders({'Authorization': `Bearer ${this.auth.token}`})
     const userLocal = JSON.parse(localStorage.getItem('user') ?? '')
 
     return this.http.get(`${environmentDev.url}/user/${this.auth.username}`, {headers}).pipe(
@@ -92,7 +92,7 @@ export class UserService {
 
 
   public updateProfileImage(formData: FormData) {
-    const headers = new HttpHeaders({'Authorization': this.auth.token})
+    const headers = new HttpHeaders({'Authorization': `Bearer ${this.auth.token}`})
     return this.http.patch(`${environmentDev.url}/user/update-profile-img`, formData, {headers}).pipe(
       map((res: any) => mappedHttpResponse(res)),
       catchError((err: HttpErrorResponse) => {

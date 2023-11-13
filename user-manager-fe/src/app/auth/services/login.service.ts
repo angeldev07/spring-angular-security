@@ -32,13 +32,11 @@ export class LoginService {
     this._currentUser = new BehaviorSubject<UserLogin>({} as UserLogin);
 
     if (currentSession['token']) {
-
       const {token, username} = currentSession
       this._token = token
       this._isLogin = true
       this._currentUser.next({username})
       return
-
     }
 
     this._token = '';
@@ -75,6 +73,7 @@ export class LoginService {
       tap(({token, username}) => {
         this.saveOnLocal('user', {token, username})
         this._currentUser.next({username})
+        this._token = token;
         this._isLogin = true;
       }),
       catchError((err: HttpErrorResponse) => {

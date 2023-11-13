@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, signal, WritableSignal} from '@angular/core';
 import {CommonModule, DatePipe, JsonPipe} from '@angular/common';
 import {Table, TableModule} from 'primeng/table';
-import {UserDTO} from "../shared/user.service";
+import {UserDTO, UserService} from "../shared/user.service";
 import {UsersService} from "./services/users.service";
 import {ButtonModule} from "primeng/button";
 import {Subscription, tap} from "rxjs";
@@ -12,12 +12,13 @@ import {UserModalComponent} from "./components/user-modal/user-modal.component";
 import {InputTextModule} from "primeng/inputtext";
 import {MessageService} from "primeng/api";
 import {ToastModule} from "primeng/toast";
+import {DialogModule} from "primeng/dialog";
 
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, TableModule, JsonPipe, DatePipe, UserModalComponent, ButtonModule, ToastModule, AvatarModule, SelectButtonModule, TagModule, InputTextModule],
+  imports: [CommonModule, TableModule, JsonPipe, DatePipe, UserModalComponent, ButtonModule, ToastModule, AvatarModule, SelectButtonModule, TagModule, InputTextModule, DialogModule],
   templateUrl: './users.component.html',
   styles: [],
   providers: [MessageService]
@@ -37,15 +38,16 @@ export class UsersComponent implements OnInit, OnDestroy {
     {label: 'Status', prop: 'active'},
     {label: 'Actions'}
   ]
+  deleteUserFlag = false
 
 
   //Photo	First name	Last name	Username	email	Status	actions
 
   constructor(
     private userService: UsersService,
-    private messageService: MessageService
-  ) {
-  }
+    private messageService: MessageService,
+    private currentUser: UserService
+  ) { }
 
   ngOnInit(): void {
 
@@ -68,14 +70,27 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   deleteUser(user: UserDTO) {
+
+    if(user.id === this.currentUser.getCurrentUserValue('id')) {
+      this.messageService.add({severity: 'error', summary: 'Error', detail: `You can't delete yourself!`});
+      this.userSelected = null
+      this.deleteUserFlag = false
+      return
+    }
+
+
     this.userService.deleteUser(user["id"]!).subscribe({
       next: res => {
         this.messageService.add({severity: 'success', summary: 'Success', detail: `User ${user.username} deleted!`});
+        this.usersList.update( value => value.filter( u => u.id !== user.id))
       },
       error: (err) => {
         this.messageService.add({severity: 'error', summary: 'Error', detail: `${err.error?.message}`});
       }
     })
+
+    this.userSelected = null
+    this.deleteUserFlag = false
 
   }
 }
