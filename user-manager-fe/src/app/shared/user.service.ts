@@ -7,6 +7,7 @@ import {mappedResponse} from './map/UserDTOMapped'
 import {mappedHttpResponse} from "./map/HttpResponseDTO";
 
 export interface UserDTO {
+  id? : number,
   firstName?: string;
   lastName?: string;
   username?: string;
@@ -51,6 +52,10 @@ export class UserService {
 
   get currentUser(){
     return this._user.asObservable()
+  }
+
+  getCurrentUserValue(value: keyof UserDTO){
+    return this._user.value[value]
   }
 
   public updateUserInfo() {

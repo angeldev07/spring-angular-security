@@ -2,6 +2,7 @@ import {UserDTO} from "../user.service";
 
 export const mappedResponse = (res: any): UserDTO => {
   const {
+    id,
     firstName,
     lastName,
     username,
@@ -16,6 +17,7 @@ export const mappedResponse = (res: any): UserDTO => {
   } = res
 
   return {
+    id,
     firstName,
     lastName,
     username,

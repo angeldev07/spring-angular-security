@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
 import {LoginService} from "../../auth/services/login.service";
 import {environmentDev} from "../../environment/environment.dev";
 import {BehaviorSubject, catchError, map, Observable, tap, throwError} from "rxjs";
@@ -12,23 +12,23 @@ import {mappedHttpResponse} from "../../shared/map/HttpResponseDTO";
 })
 export class UsersService {
 
-  private httpHeaders: HttpHeaders;
+  private httpHeaders: HttpHeaders = new HttpHeaders({'Authorization': this.auth.token});
 
   constructor(
     private http: HttpClient,
     private auth: LoginService
-  ) {
-
-    this.httpHeaders = new HttpHeaders({'Authorization': this.auth.token})
-
-  }
+  ) { }
 
   public updateUser(formData: FormData) {
     return this.http.put(`${environmentDev.url}/user/update`, formData).pipe(
-      map((res: any) => mappedHttpResponse(res)),
-      catchError((err: HttpErrorResponse) => {
-        return throwError(() => new Error(err.error?.message));
-      })
+      map((res: any) => mappedHttpResponse(res))
+    )
+  }
+
+  public deleteUser(id: number) {
+    const params =  new HttpParams().set('userId', id)
+    return this.http.delete(`${environmentDev.url}/user/delete`, {params, headers: this.httpHeaders}).pipe(
+      map((res: any) => mappedHttpResponse(res))
     )
   }
 

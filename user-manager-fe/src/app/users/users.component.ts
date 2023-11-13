@@ -10,21 +10,22 @@ import {SelectButtonModule} from "primeng/selectbutton";
 import {TagModule} from "primeng/tag";
 import {UserModalComponent} from "./components/user-modal/user-modal.component";
 import {InputTextModule} from "primeng/inputtext";
+import {MessageService} from "primeng/api";
+import {ToastModule} from "primeng/toast";
 
-const OPTIONS = {DELETE: 'DELETE', UPDATE: 'UPDATE'}
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, TableModule, JsonPipe, DatePipe, UserModalComponent, ButtonModule, AvatarModule, SelectButtonModule, TagModule, InputTextModule],
+  imports: [CommonModule, TableModule, JsonPipe, DatePipe, UserModalComponent, ButtonModule, ToastModule, AvatarModule, SelectButtonModule, TagModule, InputTextModule],
   templateUrl: './users.component.html',
-  styles: []
+  styles: [],
+  providers: [MessageService]
 })
 export class UsersComponent implements OnInit, OnDestroy {
 
-  usersList: WritableSignal<Array<UserDTO>>;
+  usersList = signal<Array<UserDTO>>([]);
   userSus$!: Subscription
-  options: any[]
   userSelected: UserDTO | null = null
   isUserSelected = false
   cols = [
@@ -37,13 +38,13 @@ export class UsersComponent implements OnInit, OnDestroy {
     {label: 'Actions'}
   ]
 
+
   //Photo	First name	Last name	Username	email	Status	actions
 
   constructor(
-    private userService: UsersService
+    private userService: UsersService,
+    private messageService: MessageService
   ) {
-    this.usersList = signal([])
-    this.options = [{label: 'pi pi-pencil', value: OPTIONS.UPDATE}, {label: 'pi pi-trash', value: OPTIONS.DELETE}]
   }
 
   ngOnInit(): void {
@@ -61,8 +62,20 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.usersList.set([])
   }
 
+
   filterUser(event: any, table: Table) {
     table.filterGlobal(event.target.value, 'contains')
   }
 
+  deleteUser(user: UserDTO) {
+    this.userService.deleteUser(user["id"]!).subscribe({
+      next: res => {
+        this.messageService.add({severity: 'success', summary: 'Success', detail: `User ${user.username} deleted!`});
+      },
+      error: (err) => {
+        this.messageService.add({severity: 'error', summary: 'Error', detail: `${err.error?.message}`});
+      }
+    })
+
+  }
 }
