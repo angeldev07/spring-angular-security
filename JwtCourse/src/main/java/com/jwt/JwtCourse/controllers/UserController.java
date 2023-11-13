@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +29,7 @@ public class UserController extends ExceptionHandling {
     @Autowired
     private IUserService userService;
 
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<User> addNewUser(@RequestBody AddUserDTO userDTO) throws EmailExistException, IOException, UsernameExistException {
         User user = userService.addUser(userDTO);
@@ -54,29 +55,40 @@ public class UserController extends ExceptionHandling {
         return ResponseEntity.ok(user);
     }
 
+    @PreAuthorize("hasAuthority('user:update')")
     @PutMapping("/update")
-    public ResponseEntity<User> updateUser(@RequestPart("userData") AddUserDTO userDTO,
+    public ResponseEntity<HttpResponse> updateUser(@RequestPart("userData") AddUserDTO userDTO,
                                            @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) throws IOException {
         userDTO.setProfileImg(profileImg);
         User user = userService.updateUser(userDTO);
-        return ResponseEntity.ok(user);
+        return new ResponseEntity<>(
+                new HttpResponse(HttpStatus.OK.value(), HttpStatus.OK, HttpStatus.OK.getReasonPhrase() ,"Photo updated successfuly" ),
+                HttpStatus.OK
+        );
     }
 
+    @PreAuthorize("hasAuthority('user:delete')")
     @DeleteMapping("/delete")
-    public ResponseEntity<Boolean> deleteUser(@RequestParam Integer userId) throws UserNotFoundException {
+    public ResponseEntity<HttpResponse> deleteUser(@RequestParam Integer userId) throws UserNotFoundException {
        User user = userService.deleteUser(userId);
-       return ResponseEntity.ok(user != null);
+       return new ResponseEntity<HttpResponse>(
+               new HttpResponse(HttpStatus.OK.value(), HttpStatus.OK, HttpStatus.OK.getReasonPhrase(), "User deletes successfully"),
+               HttpStatus.OK
+       );
     }
 
     @PatchMapping("/updatePassword")
-    public ResponseEntity<Boolean> updatePassword(@RequestBody UpdatePassword updatePassword) throws EmailNotFoundException {
+    public ResponseEntity<HttpResponse> updatePassword(@RequestBody UpdatePassword updatePassword) throws EmailNotFoundException {
         userService.resetPassword(updatePassword.getEmail(), updatePassword.getPassword());
-        return ResponseEntity.ok(true);
+        return new ResponseEntity<HttpResponse>(
+                new HttpResponse(HttpStatus.OK.value(), HttpStatus.OK, HttpStatus.OK.getReasonPhrase(), "Password updated successfully"),
+                HttpStatus.OK
+        );
     }
 
 
     @PatchMapping(value = "/update-profile-img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateProfileImg (@RequestPart("username") String username, @RequestPart("profileImg") MultipartFile img) throws IOException, UsernameNotFoundException {
+    public ResponseEntity<HttpResponse> updateProfileImg (@RequestPart("username") String username, @RequestPart("profileImg") MultipartFile img) throws IOException, UsernameNotFoundException {
         userService.updateProfileImg(username, img);
         return new ResponseEntity<>(
                 new HttpResponse(HttpStatus.OK.value(), HttpStatus.OK, HttpStatus.OK.getReasonPhrase() ,"Photo updated successfuly" ),

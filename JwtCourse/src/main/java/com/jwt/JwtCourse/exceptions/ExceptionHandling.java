@@ -46,7 +46,7 @@ public class ExceptionHandling {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<HttpResponse> accessDeniedException (){
-        return createHttpResponse(FORBIDDEN, NOT_ENOUGH_PERMISSION);
+        return createHttpResponse(UNAUTHORIZED, NOT_ENOUGH_PERMISSION);
     }
 
     @ExceptionHandler(LockedException.class)
