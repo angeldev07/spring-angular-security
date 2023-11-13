@@ -4,6 +4,7 @@ import {RouterLink, RouterLinkActive} from "@angular/router";
 import {sidebarItems} from "./sidebarItems.const";
 import {SidebarService} from "./sidebar.service";
 import {LoginService} from "../../auth/services/login.service";
+import {UserService} from "../../shared/user.service";
 
 @Component({
   selector: 'app-sidebar',
@@ -19,7 +20,8 @@ export class SidebarComponent {
 
   constructor(
     private sidebarService: SidebarService,
-    private auth: LoginService
+    private auth: LoginService,
+    private currentUser: UserService
   ) {
   }
 
@@ -28,6 +30,7 @@ export class SidebarComponent {
   }
 
   logoutFn(){
+    this.currentUser.clearUser()
     this.auth.logout()
   }
 

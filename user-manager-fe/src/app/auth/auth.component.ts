@@ -13,19 +13,16 @@ import {Router, RouterModule} from "@angular/router";
 })
 export class AuthComponent {
 
-  loginForm: FormGroup;
+  loginForm: FormGroup = this.fb.group({
+    username: ['', [Validators.required]],
+    password: ['', [Validators.required]]
+  });
 
   constructor(
     private authService: LoginService,
     private fb: FormBuilder,
     private router: Router
-  ) {
-
-    this.loginForm = this.fb.group({
-      username: ['07409', [Validators.required]],
-      password: ['angel123', [Validators.required]]
-    })
-  }
+  ) { }
 
   onSubmit(event: SubmitEvent) {
     const username = this.loginForm.controls['username'].value

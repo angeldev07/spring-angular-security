@@ -2,7 +2,7 @@ import {Injectable, signal, WritableSignal} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {environmentDev} from "../environment/environment.dev";
 import {LoginService} from "../auth/services/login.service";
-import {BehaviorSubject, catchError, map, Observable, take, tap} from "rxjs";
+import {BehaviorSubject, catchError, map, Observable, Subscription, take, tap} from "rxjs";
 import {mappedResponse} from './map/UserDTOMapped'
 import {mappedHttpResponse} from "./map/HttpResponseDTO";
 
@@ -41,10 +41,16 @@ export class UserService {
       return
     }
 
-    // else, get user from server
-    this.getCurrentUserRequest().subscribe({
+    this.auth.currentUser.subscribe({
       next: res => {
-        this._user.next(res)
+        if(!res.username) return
+
+        this.getCurrentUserRequest().subscribe({
+          next: res => {
+            this._user.next(res)
+          }
+        })
+
       }
     })
 
@@ -56,6 +62,10 @@ export class UserService {
 
   getCurrentUserValue(value: keyof UserDTO){
     return this._user.value[value]
+  }
+
+  public clearUser(){
+    this._user.next({} as UserDTO)
   }
 
   public updateUserInfo() {
