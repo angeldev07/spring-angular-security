@@ -13,12 +13,13 @@ import {InputTextModule} from "primeng/inputtext";
 import {MessageService} from "primeng/api";
 import {ToastModule} from "primeng/toast";
 import {DialogModule} from "primeng/dialog";
+import {EditAndAddUserComponent} from "./components/edit-and-add-user/edit-and-add-user.component";
 
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, TableModule, JsonPipe, DatePipe, UserModalComponent, ButtonModule, ToastModule, AvatarModule, SelectButtonModule, TagModule, InputTextModule, DialogModule],
+  imports: [CommonModule, TableModule, JsonPipe, DatePipe, UserModalComponent, EditAndAddUserComponent ,ButtonModule, ToastModule, AvatarModule, SelectButtonModule, TagModule, InputTextModule, DialogModule],
   templateUrl: './users.component.html',
   styles: [],
   providers: [MessageService]
@@ -39,9 +40,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     {label: 'Actions'}
   ]
   deleteUserFlag = false
-
-
-  //Photo	First name	Last name	Username	email	Status	actions
+  editUserFlag: boolean = false;
+  isEditOrAddUser: boolean = false; // true = edit, false = add
 
   constructor(
     private userService: UsersService,
@@ -93,4 +93,11 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.deleteUserFlag = false
 
   }
+
+  openEditUser(user: UserDTO) {
+    this.userSelected = user
+    this.editUserFlag = true
+    this.isEditOrAddUser = true
+  }
+
 }
