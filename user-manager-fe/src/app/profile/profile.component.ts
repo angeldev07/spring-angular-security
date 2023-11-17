@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, signal, WritableSignal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {UserDTO, UserService} from "../shared/user.service";
-import {Subscription, tap} from "rxjs";
+import {Subscription} from "rxjs";
 import {TagModule} from "primeng/tag";
 import {InputTextModule} from "primeng/inputtext";
 import {DropdownModule} from "primeng/dropdown";
@@ -83,7 +83,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     const formData = new FormData();
     formData.append('userData', new Blob([JSON.stringify(userData)], {type: 'application/json'}));
-    formData.append('profileImg', this.userForm.get('profileImg')?.value)
 
     this.usersService.updateUser(formData).subscribe({
       next: (res: HttpResponseDTO) => {
@@ -124,18 +123,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     upload.clear()
 
     //send the request to the server
-    this.userService.updateProfileImage(formData).pipe(
-      tap(res => {
-
-        if (res instanceof HttpErrorResponse)
-          return
-
-        const userLocal = JSON.parse(localStorage.getItem('user') ?? '')
-        userLocal.user.profileImgUrl = this.user().profileImgUrl
-        localStorage.setItem('user', JSON.stringify(userLocal))
-
-      }),
-    ).subscribe({
+    this.userService.updateProfileImage(formData).subscribe({
       next: (res: HttpResponseDTO) => {
         this.messageService.add({severity: 'success', summary: 'Profile img updated!', detail: `${res.message}`});
       },

@@ -17,7 +17,7 @@ export class UsersService {
   ) { }
 
   public updateUser(formData: FormData) {
-    return this.http.put(`${environmentDev.url}/user/update`, formData).pipe(
+    return this.http.put(`${environmentDev.url}/user/update-profile`, formData).pipe(
       map((res: any) => mappedHttpResponse(res))
     )
   }
