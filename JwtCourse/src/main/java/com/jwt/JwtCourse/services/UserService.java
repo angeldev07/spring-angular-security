@@ -119,9 +119,9 @@ public class UserService implements IUserService {
         currentUser.setAuthorities(Role.valueOf(userDTO.getRole()).getAuthorities());
         currentUser.setNotLocked(userDTO.isNonLocked());
         currentUser.setActive(userDTO.isActive());
+        currentUser.setProfileImgUrl(saveProfileImg(currentUser, userDTO.getProfileImg()));
         userRepository.save(currentUser);
-        saveProfileImg(currentUser, userDTO.getProfileImg());
-        return null;
+        return currentUser;
     }
 
     @Override
@@ -135,7 +135,8 @@ public class UserService implements IUserService {
     @Override
     public void updateProfileImg(String username, MultipartFile profileImg) throws IOException, UsernameNotFoundException {
         User user = userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException("The user does not exists") );
-        saveProfileImg(user, profileImg);
+        user.setProfileImgUrl(saveProfileImg(user, profileImg));
+        userRepository.save(user);
     }
 
     @Override
@@ -159,7 +160,7 @@ public class UserService implements IUserService {
 
     }
 
-    private void saveProfileImg(User user, MultipartFile profileImg) throws IOException {
+    private String saveProfileImg(User user, MultipartFile profileImg) throws IOException {
         if (profileImg != null) {
 
             Path userFolder = Paths.get(USER_FOLDER + user.getUsername()).toAbsolutePath().normalize();
@@ -170,9 +171,9 @@ public class UserService implements IUserService {
 
             Files.deleteIfExists(Path.of(USER_FOLDER + user.getUsername() + FORWARD_SLASH + user.getUsername() + DOT + JPG_EXTENSION ));
             Files.write(userFolder.resolve(user.getUsername() + DOT + JPG_EXTENSION), profileImg.getBytes());
-            user.setProfileImgUrl(getPathUserProfile( USER_IMG_PATH + user.getUsername() + FORWARD_SLASH + user.getUsername() + DOT + JPG_EXTENSION ));
-            userRepository.save(user);
+            return getPathUserProfile( USER_IMG_PATH + user.getUsername() + FORWARD_SLASH + user.getUsername() + DOT + JPG_EXTENSION );
         }
+        return user.getProfileImgUrl();
     }
 
     private String getPathUserProfile(String username) {

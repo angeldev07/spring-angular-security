@@ -29,7 +29,7 @@ public class UserController extends ExceptionHandling {
     @Autowired
     private IUserService userService;
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPER_ADMIN')")
+    @PreAuthorize("hasAuthority('user:create')")
     @PostMapping("/add")
     public ResponseEntity<User> addNewUser(@RequestBody AddUserDTO userDTO) throws EmailExistException, IOException, UsernameExistException {
         User user = userService.addUser(userDTO);
@@ -55,14 +55,26 @@ public class UserController extends ExceptionHandling {
         return ResponseEntity.ok(user);
     }
 
-    @PreAuthorize("hasAuthority('user:update')")
-    @PutMapping("/update")
-    public ResponseEntity<HttpResponse> updateUser(@RequestPart("userData") AddUserDTO userDTO,
-                                           @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) throws IOException {
-        userDTO.setProfileImg(profileImg);
+    @PutMapping("/update-profile")
+    public ResponseEntity<HttpResponse> updateUserProfile(@RequestPart("userData") AddUserDTO userDTO) throws IOException {
         User user = userService.updateUser(userDTO);
         return new ResponseEntity<>(
-                new HttpResponse(HttpStatus.OK.value(), HttpStatus.OK, HttpStatus.OK.getReasonPhrase() ,"Photo updated successfuly" ),
+                new HttpResponse(HttpStatus.OK.value(), HttpStatus.OK, HttpStatus.OK.getReasonPhrase() ,"Personal information updated!" ),
+                HttpStatus.OK
+        );
+    }
+
+    @PreAuthorize("hasAuthority('user:update')")
+    @PutMapping(value= "/update",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UserResponseDTO> updateUser(@RequestPart("userData") AddUserDTO userDTO,
+                                           @RequestPart(value = "profileImg", required = false) MultipartFile profileImg) throws IOException {
+        System.out.println(profileImg);
+        userDTO.setProfileImg(profileImg);
+        User user = userService.updateUser(userDTO);
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+        BeanUtils.copyProperties(user, userResponseDTO);
+        return new ResponseEntity<>(
+                userResponseDTO,
                 HttpStatus.OK
         );
     }
