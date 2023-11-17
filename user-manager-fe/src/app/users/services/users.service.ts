@@ -16,9 +16,16 @@ export class UsersService {
     private auth: LoginService
   ) { }
 
-  public updateUser(formData: FormData) {
+  public updateUserPersonalInfo(formData: FormData) {
     return this.http.put(`${environmentDev.url}/user/update-profile`, formData).pipe(
       map((res: any) => mappedHttpResponse(res))
+    )
+  }
+
+  public updateUser(formData: FormData) {
+    const headers: HttpHeaders = new HttpHeaders({'Authorization': `Bearer ${this.auth.token}`});
+    return this.http.put(`${environmentDev.url}/user/update`, formData, {headers}).pipe(
+      map((res: any) => mappedResponse(res))
     )
   }
 

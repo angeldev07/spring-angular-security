@@ -56,7 +56,7 @@
 <app-user-modal [(isUserSelected)]="isUserSelected" [(userSelected)]="userSelected" />
 
 <ng-container *ngIf="editUserFlag">
-  <edit-and-add-user [(open)]="editUserFlag" [(user)]="userSelected" [(isEdit)]="isEditOrAddUser"  />
+  <edit-and-add-user [(open)]="editUserFlag" [(user)]="userSelected" [(isEdit)]="isEditOrAddUser" (updateView)="updateList($event)"  />
 </ng-container>
 
 <p-dialog header="Are you sure you want to delete this user?" [(visible)]="deleteUserFlag" [modal]="true"  [draggable]="false" [resizable]="false" [styleClass]="'w-[90%] max-w-[750px] mx-auto'">

@@ -1,0 +1,96 @@
+<p-dialog
+  header="Header"
+  [(visible)]="open"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="resetUserSelected()"
+  [styleClass]="'w-[90%] max-w-[600px] mx-auto'"
+>
+
+  <div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <!-- First Name -->
+      <div class="mb-4">
+        <label for="firstName" class="block text-sm font-medium text-gray-600">First Name</label>
+        <input pInputText formControlName="firstName" id="firstName"
+               class="mt-1 p-2 w-full border rounded-md outline-none">
+      </div>
+
+      <!-- Last Name -->
+      <div class="mb-4">
+        <label for="lastName" class="block text-sm font-medium text-gray-600">Last Name</label>
+        <input pInputText formControlName="lastName" id="lastName"
+               class="mt-1 p-2 w-full border rounded-md outline-none">
+      </div>
+
+      <!-- Username -->
+      <div class="mb-4">
+        <label for="username" class="block text-sm font-medium text-gray-600">Username</label>
+        <input pInputText formControlName="username" id="username"
+               class="mt-1 p-2 w-full border rounded-md outline-none">
+      </div>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <label for="email" class="block text-sm font-medium text-gray-600">Email</label>
+        <input pInputText formControlName="email" type="email" id="email" name="email"
+               class="mt-1 p-2 w-full border rounded-md outline-none">
+      </div>
+
+      <!-- Role (p-dropdown) -->
+      <div class="mb-4">
+        <label  class="block text-gray-700 text-sm font-bold mb-2">User rol:</label>
+        <select  formControlName="role" class="w-full px-4 py-2 border rounded-md cursor-pointer outline-none">
+          <option *ngFor="let option of roles" [value]="option">{{ option }}</option>
+        </select>
+      </div>
+
+      <!-- Profile Image (p-upload) -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-600">Profile Image</label>
+        <!-- You can integrate p-upload component here -->
+        <p-fileUpload chooseLabel="Pick img" [mode]="'basic'" accept="image/*" (onSelect)="changePhoto($event)" />
+      </div>
+
+      <!-- Active (p-check) -->
+      <div class="mb-4">
+        <p-checkbox formControlName="active" label="Active" [binary]="true"
+                    [styleClass]=" 'cursor-pointer shadow border rounded-md'"></p-checkbox>
+      </div>
+
+      <!-- Not Locked (p-check) -->
+      <div class="mb-4">
+        <p-checkbox formControlName="nonLocked" label="Unlocked" [binary]="true"
+                    [styleClass]=" 'cursor-pointer shadow border rounded-md'"></p-checkbox>
+      </div>
+
+    </form>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <!-- Submit Button -->
+    <div class="flex justify-end gap-4 pt-4">
+
+      <button
+        class="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring focus:border-red-300"
+        (click)="resetUserSelected()"
+      >
+
+        Close
+      </button>
+
+      <button type="submit"
+              class="bg-indigo-500 text-white p-2 rounded-md hover:bg-indigo-600 focus:outline-none focus:ring focus:border-indigo-300"
+              (click)="submit()"
+      >
+        Save
+      </button>
+
+    </div>
+  </ng-template>
+
+
+</p-dialog>

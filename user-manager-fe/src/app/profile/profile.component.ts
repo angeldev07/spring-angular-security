@@ -84,7 +84,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const formData = new FormData();
     formData.append('userData', new Blob([JSON.stringify(userData)], {type: 'application/json'}));
 
-    this.usersService.updateUser(formData).subscribe({
+    this.usersService.updateUserPersonalInfo(formData).subscribe({
       next: (res: HttpResponseDTO) => {
         this.messageService.add({severity: 'success', summary: 'User updated!', detail: `${res.message}`});
         this.userService.updateUserInfo() // update the user info in the navbar

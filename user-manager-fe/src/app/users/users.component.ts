@@ -46,7 +46,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UsersService,
     private messageService: MessageService,
-    private currentUser: UserService
+    private currentUser: UserService,
   ) { }
 
   ngOnInit(): void {
@@ -100,4 +100,16 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.isEditOrAddUser = true
   }
 
+  updateList(event: UserDTO | null) {
+
+    if(event) {
+
+      this.usersList.update( value => value.map( u => u.id === event.id ? event : u))
+      this.messageService.add({severity: 'success', summary: 'Success', detail: `User info updated successfully!`});
+      return
+    }
+
+    this.messageService.add({severity: 'error', summary: 'Error', detail: `Something went wrong!`});
+
+  }
 }
