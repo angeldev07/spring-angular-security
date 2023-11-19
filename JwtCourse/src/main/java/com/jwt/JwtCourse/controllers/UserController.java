@@ -30,8 +30,9 @@ public class UserController extends ExceptionHandling {
     private IUserService userService;
 
     @PreAuthorize("hasAuthority('user:create')")
-    @PostMapping("/add")
-    public ResponseEntity<User> addNewUser(@RequestBody AddUserDTO userDTO) throws EmailExistException, IOException, UsernameExistException {
+    @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<User> addNewUser(@RequestPart("userData") AddUserDTO userDTO, @RequestPart(value = "profileImg", required = false) MultipartFile profileImg ) throws EmailExistException, IOException, UsernameExistException {
+        userDTO.setProfileImg(profileImg);
         User user = userService.addUser(userDTO);
         return ResponseEntity.ok(user);
     }

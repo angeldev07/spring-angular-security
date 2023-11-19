@@ -94,9 +94,12 @@ public class UserService implements IUserService {
                 .authorities(Role.valueOf(userDTO.getRole()).getAuthorities())
                 .isNotLocked(userDTO.isNonLocked())
                 .isActive(userDTO.isActive())
-                .profileImgUrl(null)
                 .joinDate(new Date())
                 .build();
+
+        if(userDTO.getProfileImg() != null)
+            user.setProfileImgUrl(saveProfileImg(user, userDTO.getProfileImg()));
+
         userRepository.save(user);
         return user;
     }
