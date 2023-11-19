@@ -15,6 +15,12 @@
   >
     <ng-template pTemplate="caption">
       <div class="flex">
+        <div *ngIf="hasRole()">
+          <button class="bg-emerald-700 text-white py-2 px-4 rounded-md transition-colors hover:bg-emerald-600" (click)="openAddUser()">
+            Add new user
+            <i class="pi pi-user-plus"></i>
+          </button>
+        </div>
         <div class="ml-auto">
           <input pInputText class="py-2 px-4" type="text" (input)="filterUser($event, dt1)" placeholder="Search keyword" />
           <button class="bg-emerald-700 text-white py-2 px-4 rounded-r-md transition-colors hover:bg-emerald-600" (click)="dt1.clear()">

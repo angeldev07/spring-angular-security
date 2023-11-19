@@ -19,7 +19,7 @@ import {EditAndAddUserComponent} from "./components/edit-and-add-user/edit-and-a
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, TableModule, JsonPipe, DatePipe, UserModalComponent, EditAndAddUserComponent ,ButtonModule, ToastModule, AvatarModule, SelectButtonModule, TagModule, InputTextModule, DialogModule],
+  imports: [CommonModule, TableModule, JsonPipe, DatePipe, UserModalComponent, EditAndAddUserComponent, ButtonModule, ToastModule, AvatarModule, SelectButtonModule, TagModule, InputTextModule, DialogModule],
   templateUrl: './users.component.html',
   styles: [],
   providers: [MessageService]
@@ -47,7 +47,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     private userService: UsersService,
     private messageService: MessageService,
     private currentUser: UserService,
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
 
@@ -71,7 +72,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   deleteUser(user: UserDTO) {
 
-    if(user.id === this.currentUser.getCurrentUserValue('id')) {
+    if (user.id === this.currentUser.getCurrentUserValue('id')) {
       this.messageService.add({severity: 'error', summary: 'Error', detail: `You can't delete yourself!`});
       this.userSelected = null
       this.deleteUserFlag = false
@@ -82,7 +83,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.userService.deleteUser(user["id"]!).subscribe({
       next: res => {
         this.messageService.add({severity: 'success', summary: 'Success', detail: `User ${user.username} deleted!`});
-        this.usersList.update( value => value.filter( u => u.id !== user.id))
+        this.usersList.update(value => value.filter(u => u.id !== user.id))
       },
       error: (err) => {
         this.messageService.add({severity: 'error', summary: 'Error', detail: `${err.error?.message}`});
@@ -100,16 +101,29 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.isEditOrAddUser = true
   }
 
+  openAddUser() {
+    this.editUserFlag = true
+    this.isEditOrAddUser = false
+  }
+
   updateList(event: UserDTO | null) {
 
-    if(event) {
+    if (event) {
 
-      this.usersList.update( value => value.map( u => u.id === event.id ? event : u))
+      if (this.isEditOrAddUser)
+        this.usersList.update(value => value.map(u => u.id === event.id ? event : u))
+      else
+        this.usersList.update(value => [...value, event])
+
       this.messageService.add({severity: 'success', summary: 'Success', detail: `User info updated successfully!`});
       return
     }
 
     this.messageService.add({severity: 'error', summary: 'Error', detail: `Something went wrong!`});
 
+  }
+
+  hasRole() {
+    return this.currentUser.currentUserValue.authorities?.includes('user:create')
   }
 }

@@ -49,7 +49,7 @@ export class EditAndAddUserComponent {
     email: [''],
     active: [true],
     nonLocked: [true],
-    role: [''],
+    role: [this.roles[0]],
     profileImg: new FormControl()
   })
 
@@ -115,7 +115,24 @@ export class EditAndAddUserComponent {
     formData.append('profileImg', this.form.get('profileImg')?.value);
 
 
-    this.usersService.updateUser(formData).subscribe({
+    if(this.user && this.isEdit){
+      this.usersService.updateUser(formData).subscribe({
+        next: res => {
+          this.updateView.emit(res)
+        },
+        error: (err: HttpErrorResponse) => {
+          this.updateView.emit(null)
+          console.log(err.error)
+        },
+        complete: () => {
+          this.resetUserSelected()
+        }
+      })
+      return
+    }
+
+    // if is not edit, is adding the new user
+    this.usersService.addUser(formData).subscribe({
       next: res => {
         this.updateView.emit(res)
       },
@@ -124,9 +141,11 @@ export class EditAndAddUserComponent {
         console.log(err.error)
       },
       complete: () => {
-        this.resetUserSelected()
+        this.openChange.emit(false)
+        this.userChange.emit(null)
       }
     })
+
 
 
   }

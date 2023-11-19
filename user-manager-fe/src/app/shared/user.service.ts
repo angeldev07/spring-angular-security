@@ -59,6 +59,10 @@ export class UserService {
   get currentUser(){
     return this._user.asObservable()
   }
+  get currentUserValue(){
+    return this._user.value
+  }
+
 
   getCurrentUserValue(value: keyof UserDTO){
     return this._user.value[value]

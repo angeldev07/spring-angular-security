@@ -1,5 +1,5 @@
 <p-dialog
-  header="Header"
+  [header]="user ? 'Edit User' : 'Create User'"
   [(visible)]="open"
   [modal]="true"
   [draggable]="false"
